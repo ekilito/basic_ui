@@ -167,9 +167,20 @@ defineExpose({
   resetFields() {
     return formInstance.value?.resetFields()
   },
-  // 获取表单所有值（浅拷贝）
-  getFieldsValue() {
-    return { ...formData.value };
+   /**
+   * 获取表单值
+   * - 不传参数时，返回所有字段
+   * - 传字段名数组时，返回指定字段（支持嵌套路径）
+   */
+ getFieldsValue(fieldNames?: string[]) {
+    const values = formData.value;
+    if (!fieldNames || fieldNames.length === 0) {
+      return { ...values };
+    }
+    return fieldNames.reduce((res, field) => {
+      res[field] = get(values, field); // 支持嵌套路径
+      return res;
+    }, {} as Record<string, any>);
   }
 })
 </script>

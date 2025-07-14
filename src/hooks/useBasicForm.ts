@@ -17,5 +17,8 @@ export const useBasicForm = (props) => {
     resetFields() {
       return formRef.value?.resetFields()
     },
+     getFieldsValue: (fieldNames?: string[]) => {
+      return formRef.value?.getFieldsValue?.(fieldNames);
+    },
   }
 }
