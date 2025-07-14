@@ -43,7 +43,7 @@ const rules = {
   select: [{ required: true, message: "rules", trigger: "change" }],
 };
 
-const {basicForm , validateFields} = useBasicForm({
+const {basicForm , clearValidate} = useBasicForm({
   rules, formItems, modelValue: formData
 })
 
@@ -51,7 +51,7 @@ const handelClick = async () => {
   // await validate();
   // console.log("formData", formData.value);
 
-await validateFields(['input']);
+await clearValidate(['input']);
 
 };
 </script>

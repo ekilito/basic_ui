@@ -10,11 +10,11 @@ import {
   ElRadio,
   ElRadioGroup,
   ElSelect,
- type FormInstance,
+  type FormInstance,
 } from "element-plus";
 import { type Component, computed, defineAsyncComponent, h, provide, type Ref, useSlots, useTemplateRef, watch } from "vue";
 import { get, omit, set } from "lodash-es";
-import  { OptionItem } from './index.d'
+import { OptionItem } from './index.d'
 import MySelect from "./components/MySelect.vue";
 
 const props = defineProps(["formItems", "rules"]);
@@ -116,11 +116,11 @@ const ComponentItem = {
         // 表单 type 组件
         getComponent(item),
         {
-          
+
           // v-model
-          modelValue: get(formData.value,item.key),
+          modelValue: get(formData.value, item.key),
           "onUpdate:modelValue": (value: any) => {
-            if(item.trim) {
+            if (item.trim) {
               value = value.trim()
             }
             // formData.value[item.key] = value;
@@ -129,10 +129,10 @@ const ComponentItem = {
           ...getProps(item),
           // ...reactive(getProps(item))
 
-           formData: formData.value // 透传自定义组件
+          formData: formData.value // 透传自定义组件
         },
         Object.assign(
-           item.slots || {},
+          item.slots || {},
           Object.entries(item.slots || {}).reduce((acc, [key, value]) => {
             if (typeof value === "string") {
               if (slots[value]) {
@@ -162,17 +162,17 @@ watch(
 
 defineExpose({
   validate(...args) {
-     return formInstance.value?.validate(...args)
+    return formInstance.value?.validate(...args)
   },
   resetFields() {
     return formInstance.value?.resetFields()
   },
-   /**
-   * 获取表单值
-   * - 不传参数时，返回所有字段
-   * - 传字段名数组时，返回指定字段（支持嵌套路径）
-   */
- getFieldsValue(fieldNames?: string[]) {
+  /**
+  * 获取表单值
+  * - 不传参数时，返回所有字段
+  * - 传字段名数组时，返回指定字段（支持嵌套路径）
+  */
+  getFieldsValue(fieldNames?: string[]) {
     const values = formData.value;
     if (!fieldNames || fieldNames.length === 0) {
       return { ...values };
@@ -196,46 +196,55 @@ defineExpose({
    * 说明: 校验指定表单项
    */
   validateFields(nameList?: (string | number)[]): Promise<any> {
-  return new Promise((resolve, reject) => {
-    if (!formInstance.value) return reject('表单实例不存在');
+    return new Promise((resolve, reject) => {
+      if (!formInstance.value) return reject('表单实例不存在');
 
-    if (!nameList || nameList.length === 0) {
-      formInstance.value.validate((valid, fields) => {
-        valid ? resolve(formData.value) : reject(fields);
-      });
-    } else {
-      const fieldsToValidate = nameList.map(String); // ✅ 转成 string[]
-      formInstance.value.validateField(fieldsToValidate, (errorMessage) => {
-        if (!errorMessage) {
-          const result = fieldsToValidate.reduce((acc, key) => {
-            acc[key] = get(formData.value, key);
-            return acc;
-          }, {} as Record<string, any>);
-          resolve(result);
-        } else {
-          reject(errorMessage);
-        }
-      });
-    }
-  });
-}
+      if (!nameList || nameList.length === 0) {
+        formInstance.value.validate((valid, fields) => {
+          valid ? resolve(formData.value) : reject(fields);
+        });
+      } else {
+        const fieldsToValidate = nameList.map(String); // ✅ 转成 string[]
+        formInstance.value.validateField(fieldsToValidate, (errorMessage) => {
+          if (!errorMessage) {
+            const result = fieldsToValidate.reduce((acc, key) => {
+              acc[key] = get(formData.value, key);
+              return acc;
+            }, {} as Record<string, any>);
+            resolve(result);
+          } else {
+            reject(errorMessage);
+          }
+        });
+      }
+    });
+  },
 
+  /**
+   * clearValidate
+   * 类型: (name?: string | string[]) => Promise<void>
+   * 说明: 清空校验
+   */
+  clearValidate(name?: string | string[]): Promise<void> {
+    if (!formInstance.value) return Promise.reject('表单实例不存在');
+    formInstance.value.clearValidate(name);
+    return Promise.resolve();
+  }
 
 })
 </script>
 
 <template>
   <el-form ref="formRef" :model="formData" :rules="rules" label-width="200px">
-   <el-row :gutter="10">
-    <el-col v-for="item in items" :key="item.key" :span="item.span || 24">
-       <el-form-item :label="item.label"  :prop="item.key">
-      <slot :name="item.key">
-        <ComponentItem :item="item"></ComponentItem>
-      </slot>
-      <!-- <component :is="getComponent(item)" v-model="formData[item.key]" v-bind="getProps(item)"></component> -->
-    </el-form-item>
-    </el-col>
-   </el-row>
+    <el-row :gutter="10">
+      <el-col v-for="item in items" :key="item.key" :span="item.span || 24">
+        <el-form-item :label="item.label" :prop="item.key">
+          <slot :name="item.key">
+            <ComponentItem :item="item"></ComponentItem>
+          </slot>
+          <!-- <component :is="getComponent(item)" v-model="formData[item.key]" v-bind="getProps(item)"></component> -->
+        </el-form-item>
+      </el-col>
+    </el-row>
   </el-form>
 </template>
-
