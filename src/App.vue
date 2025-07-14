@@ -42,15 +42,18 @@ const rules = {
   input: [{ required: true, message: "rules", trigger: "blur" }],
 };
 
-const {basicForm , validate , getFieldsValue} = useBasicForm({
+const {basicForm , setFieldsValue} = useBasicForm({
   rules, formItems, modelValue: formData
 })
 
 const handelClick = async () => {
   // await validate();
   // console.log("formData", formData.value);
-const value = getFieldsValue()
-console.log(value)
+
+ await setFieldsValue({
+   input: 'setFieldsValue'
+ })
+
 };
 </script>
 

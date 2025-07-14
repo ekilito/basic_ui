@@ -20,5 +20,8 @@ export const useBasicForm = (props) => {
      getFieldsValue: (fieldNames?: string[]) => {
       return formRef.value?.getFieldsValue?.(fieldNames);
     },
+     setFieldsValue: async <T extends Record<string, any>>(values: T): Promise<void> => {
+      return formRef.value?.setFieldsValue?.(values);
+    }
   }
 }

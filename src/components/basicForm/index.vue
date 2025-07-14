@@ -181,6 +181,13 @@ defineExpose({
       res[field] = get(values, field); // 支持嵌套路径
       return res;
     }, {} as Record<string, any>);
+  },
+  // 设置表单字段值
+  setFieldsValue<T extends Record<string, any>>(values: T): Promise<void> {
+    Object.entries(values).forEach(([key, value]) => {
+      set(formData.value, key, value);
+    });
+    return Promise.resolve();
   }
 })
 </script>
