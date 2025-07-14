@@ -20,6 +20,7 @@ const formItems = computed(() => [
     key: "input",
     type: "input",
     placeholder: "请输入",
+    hidden: formData.value.select == 2,
   },
   {
     label: "select",
@@ -30,6 +31,10 @@ const formItems = computed(() => [
       { label: "男", value: 1 },
       { label: "女", value: 2 },
     ],
+    onChange:(e) => {
+       console.log(e)
+       e == 1 && (formData.value.input = 'input')
+    }
   }
 ]);
 
@@ -47,5 +52,9 @@ const handelClick = async () => {
 };
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.app-page {
+  width: 600px;
+}
+</style>
 

@@ -14,6 +14,7 @@ import {
 } from "element-plus";
 import { type Component, computed, defineAsyncComponent, h, provide, type Ref, useSlots, useTemplateRef, watch } from "vue";
 import { get, omit, set } from "lodash-es";
+import  { OptionItem } from './index.d'
 import MySelect from "./components/MySelect.vue";
 
 const props = defineProps(["formItems", "rules"]);
@@ -29,7 +30,7 @@ defineOptions({
 const slots = useSlots();
 
 function transformOptions(component: Component, optionsComponent: Component) {
-  return (props: { options: { label: string; value: string }[] }) => {
+  return (props: { options: OptionItem[] }) => {
     const { options = [] } = props;
     return h(component, props, () =>
       options.map((item) => {
@@ -146,7 +147,18 @@ const ComponentItem = {
   },
 };
 
-watch();
+watch(
+  () => props.formItems,
+  (newItems) => {
+    newItems.forEach(item => {
+      if (item.hidden && item.key && formData.value.hasOwnProperty(item.key)) {
+        delete formData.value[item.key];
+      }
+    });
+  },
+  { deep: true }
+);
+
 
 defineExpose({
   validate(...args) {
@@ -154,6 +166,10 @@ defineExpose({
   },
   resetFields() {
     return formInstance.value?.resetFields()
+  },
+  // 获取表单所有值（浅拷贝）
+  getFieldsValue() {
+    return { ...formData.value };
   }
 })
 </script>

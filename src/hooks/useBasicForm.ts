@@ -13,6 +13,9 @@ export const useBasicForm = (props) => {
     basicForm: Component,
     validate() {
       return formRef.value?.validate()
-    }
+    },
+    resetFields() {
+      return formRef.value?.resetFields()
+    },
   }
 }

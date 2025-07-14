@@ -6,3 +6,9 @@ export interface FormItem {
   type: string | Component;
   [key: string]: any;
 }
+
+export interface OptionItem {
+  label: string;
+  value: string;
+  slots?: string | (() => any);
+}
