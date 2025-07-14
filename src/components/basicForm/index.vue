@@ -273,13 +273,32 @@ const innerRules = computed(() => {
 });
 
 
+function getFormItemProps(item: Record<string, any>) {
+  const allowedProps = [
+    'labelWidth',
+    'required',
+    'rules',
+    'error',
+    'showMessage',
+    'inlineMessage',
+    'size',
+    'labelPosition',
+    'labelSuffix',
+  ];
+  return Object.fromEntries(
+    allowedProps.filter((key) => key in item).map((key) => [key, item[key]])
+  );
+}
+
+
+
 </script>
 
 <template>
-  <el-form ref="formRef" :model="formData" :rules="innerRules" label-width="200px">
+  <el-form ref="formRef" :model="formData" :rules="innerRules" label-width="200px" label-suffix="：">
     <el-row :gutter="10">
       <el-col v-for="item in items" :key="item.key" :span="item.span || 24">
-        <el-form-item :label="item.label" :prop="item.key" :label-width="item.labelWidth">
+        <el-form-item :label="item.label" :prop="item.key"  v-bind="getFormItemProps(item)">
           <slot :name="item.key">
             <ComponentItem :item="item"></ComponentItem>
           </slot>

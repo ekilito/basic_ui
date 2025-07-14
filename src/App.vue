@@ -20,10 +20,11 @@ const formItems = computed(() => [
     key: "input",
     type: "input",
     placeholder: "请输入",
-    labelWidth: 200,
+    labelWidth: 100,
     hidden: formData.value.select == 2,
     size:'small',
     required: true,
+    labelSuffix:'：'
     // rules: [{ required: true, message: "rules", trigger: "blur" }]
   },
   {
