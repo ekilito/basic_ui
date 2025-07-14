@@ -1,11 +1,14 @@
 import { h, reactive, ref } from "vue";
 import basicForm from "../components/basicForm/index.vue";
 
-export const useBasicForm = (props) => {
+// props
+export const useBasicForm = (initialProps: Record<string, any>) => {
   const formRef = ref();
+  
+  const reactiveProps = reactive({ ...initialProps }); // ✅ reactive props
 
   const Component = (_, { slots }) => {
-    return h(basicForm, { ...reactive(props), ref: formRef }, slots);
+    return h(basicForm, { ...reactiveProps, ref: formRef }, slots);
   };
 
   return {
@@ -28,5 +31,8 @@ export const useBasicForm = (props) => {
     clearValidate: async (name?: string | string[]) => {
       return formRef.value?.clearValidate?.(name);
     },
+    setProps: async (newProps: Partial<typeof reactiveProps>) => {
+      Object.assign(reactiveProps, newProps);
+    }
   };
 };
