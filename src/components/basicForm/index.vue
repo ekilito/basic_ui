@@ -242,15 +242,26 @@ defineExpose({
     formInstance.value.clearValidate(name);
     return Promise.resolve();
   }
+  
 
 })
+
+const innerRules = computed(() => {
+  const mergedRules = { ...props.rules };
+  props.formItems.forEach((item: any) => {
+    if (item.rules) {
+      mergedRules[item.key] = item.rules;
+    }
+  });
+  return mergedRules;
+});
 </script>
 
 <template>
-  <el-form ref="formRef" :model="formData" :rules="rules" label-width="200px">
+  <el-form ref="formRef" :model="formData" :rules="innerRules" label-width="200px">
     <el-row :gutter="10">
       <el-col v-for="item in items" :key="item.key" :span="item.span || 24">
-        <el-form-item :label="item.label" :prop="item.key">
+        <el-form-item :label="item.label" :prop="item.key" :label-width="item.labelWidth">
           <slot :name="item.key">
             <ComponentItem :item="item"></ComponentItem>
           </slot>

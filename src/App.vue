@@ -20,7 +20,9 @@ const formItems = computed(() => [
     key: "input",
     type: "input",
     placeholder: "请输入",
+    labelWidth: 200,
     hidden: formData.value.select == 2,
+    rules: [{ required: true, message: "rules", trigger: "blur" }]
   },
   {
     label: "select",
@@ -38,23 +40,15 @@ const formItems = computed(() => [
   }
 ]);
 
-const rules = {
-  input: [{ required: true, message: "rules", trigger: "blur" }],
-  select: [{ required: true, message: "rules", trigger: "change" }],
-};
+const rules = { };
 
-const {basicForm , setProps} = useBasicForm({
+const {basicForm , validate} = useBasicForm({
   rules, formItems, modelValue: formData
 })
 
 const handelClick = async () => {
-  // await validate();
-  // console.log("formData", formData.value);
-
-await setProps({
-  labelWidth: '180px'
-});
-
+  await validate();
+  console.log("formData", formData.value);
 };
 </script>
 
