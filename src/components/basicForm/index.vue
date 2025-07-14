@@ -172,6 +172,10 @@ defineExpose({
   * - 不传参数时，返回所有字段
   * - 传字段名数组时，返回指定字段（支持嵌套路径）
   */
+  // 获取全部字段值
+  // const allValues = getFieldsValue();
+  // // 获取部分字段值（支持嵌套）
+  // const partValues = getFieldsValue(['username', 'profile.address.city']);
   getFieldsValue(fieldNames?: string[]) {
     const values = formData.value;
     if (!fieldNames || fieldNames.length === 0) {
@@ -183,6 +187,10 @@ defineExpose({
     }, {} as Record<string, any>);
   },
   // 设置表单字段值
+  //   await setFieldsValue({
+  //   age: 30,
+  //   'profile.address': '上海'
+  // });
   setFieldsValue<T extends Record<string, any>>(values: T): Promise<void> {
     Object.entries(values).forEach(([key, value]) => {
       set(formData.value, key, value);
@@ -195,6 +203,7 @@ defineExpose({
    * 类型: (nameList?: NamePath[]) => Promise<any>
    * 说明: 校验指定表单项
    */
+  // await validateFields(['username', 'age']);
   validateFields(nameList?: (string | number)[]): Promise<any> {
     return new Promise((resolve, reject) => {
       if (!formInstance.value) return reject('表单实例不存在');
@@ -225,6 +234,9 @@ defineExpose({
    * 类型: (name?: string | string[]) => Promise<void>
    * 说明: 清空校验
    */
+  // await clearValidate(); // 清除全部校验
+  // await clearValidate('username'); // 清除某一项
+  // await clearValidate(['username', 'password']); // 清除多项
   clearValidate(name?: string | string[]): Promise<void> {
     if (!formInstance.value) return Promise.reject('表单实例不存在');
     formInstance.value.clearValidate(name);
