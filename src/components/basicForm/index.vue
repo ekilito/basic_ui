@@ -188,7 +188,39 @@ defineExpose({
       set(formData.value, key, value);
     });
     return Promise.resolve();
-  }
+  },
+
+  /**
+   * validateFields
+   * 类型: (nameList?: NamePath[]) => Promise<any>
+   * 说明: 校验指定表单项
+   */
+  validateFields(nameList?: (string | number)[]): Promise<any> {
+  return new Promise((resolve, reject) => {
+    if (!formInstance.value) return reject('表单实例不存在');
+
+    if (!nameList || nameList.length === 0) {
+      formInstance.value.validate((valid, fields) => {
+        valid ? resolve(formData.value) : reject(fields);
+      });
+    } else {
+      const fieldsToValidate = nameList.map(String); // ✅ 转成 string[]
+      formInstance.value.validateField(fieldsToValidate, (errorMessage) => {
+        if (!errorMessage) {
+          const result = fieldsToValidate.reduce((acc, key) => {
+            acc[key] = get(formData.value, key);
+            return acc;
+          }, {} as Record<string, any>);
+          resolve(result);
+        } else {
+          reject(errorMessage);
+        }
+      });
+    }
+  });
+}
+
+
 })
 </script>
 

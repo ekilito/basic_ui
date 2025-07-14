@@ -40,9 +40,10 @@ const formItems = computed(() => [
 
 const rules = {
   input: [{ required: true, message: "rules", trigger: "blur" }],
+  select: [{ required: true, message: "rules", trigger: "change" }],
 };
 
-const {basicForm , setFieldsValue} = useBasicForm({
+const {basicForm , validateFields} = useBasicForm({
   rules, formItems, modelValue: formData
 })
 
@@ -50,9 +51,7 @@ const handelClick = async () => {
   // await validate();
   // console.log("formData", formData.value);
 
- await setFieldsValue({
-   input: 'setFieldsValue'
- })
+await validateFields(['input']);
 
 };
 </script>
