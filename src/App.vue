@@ -16,27 +16,26 @@ const formData = ref<any>({
 
 const formItems = computed(() => [
   {
-    label: "input",
+    label: "姓名",
     key: "input",
     type: "input",
     placeholder: "请输入",
     labelWidth: 200,
     hidden: formData.value.select == 2,
-    rules: [{ required: true, message: "rules", trigger: "blur" }]
+    size:'small',
+    required: true,
+    // rules: [{ required: true, message: "rules", trigger: "blur" }]
   },
   {
-    label: "select",
+    label: "性别",
     key: "select",
     type: "select",
     placeholder: "请选择",
+    required: true,
     options: [
       { label: "男", value: 1 },
       { label: "女", value: 2 },
-    ],
-    onChange:(e) => {
-       console.log(e)
-       e == 1 && (formData.value.input = 'input')
-    }
+    ]
   }
 ]);
 

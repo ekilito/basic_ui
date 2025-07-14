@@ -248,13 +248,31 @@ defineExpose({
 
 const innerRules = computed(() => {
   const mergedRules = { ...props.rules };
+
   props.formItems.forEach((item: any) => {
     if (item.rules) {
       mergedRules[item.key] = item.rules;
+    } else if (item.required) {
+      const isSelectLike =
+        ['select', 'radioGroup', 'checkboxGroup'].includes(item.type) ||
+        item.type?.includes('picker');
+
+      const actionWord = isSelectLike ? '请选择' : '请输入';
+
+      mergedRules[item.key] = [
+        {
+          required: true,
+          message: item.message || `${actionWord}${item.label || item.key}`,
+          trigger: isSelectLike ? 'change' : 'blur',
+        },
+      ];
     }
   });
+
   return mergedRules;
 });
+
+
 </script>
 
 <template>
