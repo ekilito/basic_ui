@@ -44,9 +44,9 @@ const formItems = computed(() => [
     trim: true,
     hidden: formData.value.select == 2,
     span: 24,
-   // rules: [{ required: true, message: "请输入姓名", trigger: "blur" }],
+    // rules: [{ required: true, message: "请输入姓名", trigger: "blur" }],
   },
-    {
+  {
     label: "密码",
     key: "password",
     type: "password",
@@ -59,75 +59,74 @@ const formItems = computed(() => [
     max: "100",
     min: "0",
     placeholder: "请输入",
-    controls: false
+    controls: false,
   },
   {
     label: "文本框",
     key: "text",
     type: "textarea",
     placeholder: "请输入",
-    resize: "none"
+    resize: "none",
   },
   {
     label: "时间",
     key: "date",
     type: "datetime",
-    placeholder: '请输入时间',
-    valueFormat: "YYYY-MM-DD HH:mm:ss"
+    placeholder: "请输入时间",
+    valueFormat: "YYYY-MM-DD HH:mm:ss",
   },
-   {
+  {
     label: "switch",
     key: "switch",
-    type: "switch"
+    type: "switch",
   },
-    {
+  {
     label: "radioGroup",
     key: "radioGroup",
     type: "radioGroup",
-    options: 
-     [
-      { label: 'radio1', value: 1},
-      { label: 'radio2', value: 2}
-     ]
-  },    {
+    options: [
+      { label: "radio1", value: 1 },
+      { label: "radio2", value: 2 },
+    ],
+  },
+  {
     label: "checkboxGroup",
     key: "checkboxGroup",
     type: "checkboxGroup",
-    options: 
-     [
-      { label: 'box1', value: 1},
-      { label: 'box2', value: 2}
-     ]
+    options: [
+      { label: "box1", value: 1 },
+      { label: "box2", value: 2 },
+    ],
   },
-     {
+  {
     label: "time",
     key: "time",
     type: "time",
-    placeholder: '请输入时间',
+    placeholder: "请输入时间",
   },
-       {
+  {
     label: "timeRange",
     key: "timeRange",
     type: "timeRange",
-    rangeSeparator:"To",
-      startPlaceholder:"Start time",
-      endPlaceholder:"End time",
+    rangeSeparator: "To",
+    startPlaceholder: "Start time",
+    endPlaceholder: "End time",
     // isRange: true
   },
-    {
-    label: 'rate',
-    key: 'rate',
-    type: 'rate',
-  },
-      {
-    label: 'color',
-    key: 'color',
-    type: 'color',
+  {
+    label: "rate",
+    key: "rate",
+    type: "rate",
   },
   {
-    label: 'slider',
-    key: 'slider',
-    type: 'slider',
+    label: "color",
+    key: "color",
+    type: "color",
+  },
+  {
+    label: "slider",
+    key: "slider",
+    type: "slider",
   },
   {
     label: "性别",
@@ -152,6 +151,78 @@ const formItems = computed(() => [
     },
   },
   {
+    label: "cascader",
+    key: "cascader",
+    type: "cascader",
+    options: [
+      {
+        value: "guide",
+        label: "Guide",
+        children: [
+          {
+            value: "disciplines",
+            label: "Disciplines",
+            children: [
+              {
+                value: "consistency",
+                label: "Consistency",
+              },
+              {
+                value: "feedback",
+                label: "Feedback",
+              },
+              {
+                value: "efficiency",
+                label: "Efficiency",
+              },
+              {
+                value: "controllability",
+                label: "Controllability",
+              },
+            ],
+          },
+          {
+            value: "navigation",
+            label: "Navigation",
+            children: [
+              {
+                value: "side nav",
+                label: "Side Navigation",
+              },
+              {
+                value: "top nav",
+                label: "Top Navigation",
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  {
+label: 'transfer',
+key: 'transfer',
+type: 'transfer',
+data: [
+  { key: 1, label: "Option 1", disabled: false },
+  { key: 2, label: "Option 2", disabled: false },
+  { key: 3, label: "Option 3", disabled: false },
+  { key: 4, label: "Option 4", disabled: true },
+  { key: 5, label: "Option 5", disabled: false },
+  { key: 6, label: "Option 6", disabled: false },
+  { key: 7, label: "Option 7", disabled: false },
+  { key: 8, label: "Option 8", disabled: true },
+  { key: 9, label: "Option 9", disabled: false },
+  { key: 10, label: "Option 10", disabled: false },
+  { key: 11, label: "Option 11", disabled: false },
+  { key: 12, label: "Option 12", disabled: true },
+  { key: 13, label: "Option 13", disabled: false },
+  { key: 14, label: "Option 14", disabled: false },
+  { key: 15, label: "Option 15", disabled: false }
+]
+
+  },
+  {
     label: "keySlot",
     key: "keySlot",
   },
@@ -173,7 +244,7 @@ const handelClick = async () => {
 
 <style scoped lang="scss">
 .app-page {
-  width: 600px;
+  width: 800px;
 }
 :deep(.el-input-number .el-input__inner) {
   text-align: left;
