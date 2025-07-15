@@ -56,7 +56,7 @@ function withSlots(componentFactory: (props: any) => any) {
 }
 
 function transformOptions(component: Component, optionsComponent: Component) {
-  return (props: { options: OptionItem[]; fieldNames?: { label: string; value: string | number } }) => {
+  return (props: { options: OptionItem[]; fieldNames?: { label: string; value: string | number } ; slots?: Record<string, any>;  }) => {
     const { options = [], fieldNames = { label: "label", value: "value" } } = props;
     return h(
       component,
@@ -115,24 +115,24 @@ const dateTypeMap: Record<string, string> = {
 const componentMap: Record<string, any> = {
   input: ElInput,
   number: ElInputNumber,
-  textarea: ElInput, // 使用 type="textarea"
-  password: ElInput, // 使用 show-password
+  textarea: ElInput,
+  password: ElInput, 
 
   select: transformOptions(ElSelect, ElOption),
   radioGroup: transformOptions(ElRadioGroup, ElRadio),
   checkboxGroup: transformOptions(ElCheckboxGroup, ElCheckbox),
 
-  date: ElDatePicker, // 单日期
-  datetime: ElDatePicker, // 需设置 type="datetime"
-  daterange: ElDatePicker, // 需设置 type="daterange"
-  datetimerange: ElDatePicker, // 需设置 type="datetimerange"
-  month: ElDatePicker, // 需设置 type="month"
-  year: ElDatePicker, // 需设置 type="year"
+  date: ElDatePicker, 
+  datetime: ElDatePicker, 
+  daterange: ElDatePicker, 
+  datetimerange: ElDatePicker, 
+  month: ElDatePicker, 
+  year: ElDatePicker,
 
   switch: ElSwitch,
   slider: ElSlider,
   time: ElTimePicker,
-  timeRange: ElTimePicker, // type="timerange"
+  timeRange: ElTimePicker, 
 
   cascader: ElCascader,
   rate: ElRate,
@@ -150,18 +150,6 @@ const componentMap: Record<string, any> = {
     });
   }),
 };
-
-/**
- * 
- * {
-    label: "number",
-    key: "number",
-    type: "input",
-    span: 12,
-    placeholder: "请输入",
-  },
- * 
- */
 
 const rootProps = ["label", "key", "type", "span"];
 
@@ -185,7 +173,7 @@ function getProps(item: Record<string, any>) {
   const timeTypes = ['time', 'timeRange'];
   if (timeTypes.includes(item.type)) {
     props.isRange = item.type === 'timeRange';
-    props.type = 'time'; // 基础组件仍然是 time 类型
+    props.type = 'time'; 
   }
 
   // textarea、password 类型处理
