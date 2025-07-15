@@ -20,19 +20,12 @@ const formItems = computed(() => [
     key: "input",
     type: "input",
     placeholder: "请输入",
-    labelWidth: 100,
-    hidden: formData.value.select == 2,
-    size:'small',
-    required: true,
-    labelSuffix:'：'
-    // rules: [{ required: true, message: "rules", trigger: "blur" }]
   },
   {
     label: "性别",
     key: "select",
     type: "select",
     placeholder: "请选择",
-    required: true,
     options: [
       { label: "男", value: 1 },
       { label: "女", value: 2 },
@@ -40,7 +33,9 @@ const formItems = computed(() => [
   }
 ]);
 
-const rules = { };
+const rules = {
+  //input: [{ required: true, message: "rules", trigger: "blur" }]
+};
 
 const {basicForm , validate} = useBasicForm({
   rules, formItems, modelValue: formData
@@ -55,6 +50,7 @@ const handelClick = async () => {
 <style scoped lang="scss">
 .app-page {
   width: 600px;
+  border: 1px solid #999;
 }
 </style>
 

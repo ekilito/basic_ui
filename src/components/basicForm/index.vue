@@ -242,7 +242,7 @@ defineExpose({
     formInstance.value.clearValidate(name);
     return Promise.resolve();
   }
-  
+
 
 })
 
@@ -295,12 +295,15 @@ function getFormItemProps(item: Record<string, any>) {
 </script>
 
 <template>
-  <el-form ref="formRef" :model="formData" :rules="innerRules" label-width="200px" label-suffix="：">
+  <el-form ref="formRef" :model="formData" :rules="innerRules" label-width="100px" label-suffix="：">
     <el-row :gutter="10">
       <el-col v-for="item in items" :key="item.key" :span="item.span || 24">
-        <el-form-item :label="item.label" :prop="item.key"  v-bind="getFormItemProps(item)">
+        <el-form-item :label="item.label" :prop="item.key" v-bind="getFormItemProps(item)">
           <slot :name="item.key">
-            <ComponentItem :item="item"></ComponentItem>
+            <div class="form-item">
+              <ComponentItem :item="item" class="component-item"></ComponentItem>
+              <span v-if="item.unit" class="unit-text">{{ item.unit }}</span>
+            </div>
           </slot>
           <!-- <component :is="getComponent(item)" v-model="formData[item.key]" v-bind="getProps(item)"></component> -->
         </el-form-item>
@@ -308,3 +311,23 @@ function getFormItemProps(item: Record<string, any>) {
     </el-row>
   </el-form>
 </template>
+
+<style scoped lang="scss">
+.form-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+
+  .component-item {
+    width: 100%
+  }
+
+  .unit-text {
+    width: 80px;
+    margin-left: 8px;
+    color: #999;
+    font-size: 16px;
+    white-space: nowrap;
+  }
+}
+</style>
