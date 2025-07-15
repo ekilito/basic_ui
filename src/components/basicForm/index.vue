@@ -1,15 +1,23 @@
 component
 <script setup lang="ts">
 import {
+  ElCascader,
   ElCheckbox,
   ElCheckboxGroup,
+  ElColorPicker,
   ElDatePicker,
   ElInput,
   ElInputNumber,
   ElOption,
   ElRadio,
   ElRadioGroup,
+  ElRate,
   ElSelect,
+  ElSlider,
+  ElSwitch,
+  ElTimePicker,
+  ElTransfer,
+  ElUpload,
   type FormInstance,
 } from "element-plus";
 import {
@@ -50,55 +58,88 @@ function withSlots(componentFactory: (props: any) => any) {
 function transformOptions(component: Component, optionsComponent: Component) {
   return (props: { options: OptionItem[]; fieldNames?: { label: string; value: string | number } }) => {
     const { options = [], fieldNames = { label: "label", value: "value" } } = props;
-     return h(component, props, 
-     //() =>
-    //   options.map((item) => {
-    //     let _slots = item.slots;
-    //     if (typeof _slots === "string") {
-    //       _slots = slots[_slots];
-    //     }
-    //     return h(
-    //       optionsComponent,
-    //       // {
-    //       //   label: item.label,
-    //       //   value: item.value,
-    //       // },
-    //       {
-    //         label: item[fieldNames.label],
-    //         value: item[fieldNames.value],
-    //       },
-    //       _slots,
-    //     );
-    //   }),
-    // );
-    {
-    default: () =>
-      options.map((item) => {
-        let _slots = item.slots;
-        if (typeof _slots === "string") {
-          _slots = slots[_slots];
-        }
-        return h(
-          optionsComponent,
-          {
-            label: item[fieldNames.label],
-            value: item[fieldNames.value],
-          },
-          _slots,
-        );
-      }),
-    ...props.slots,
-  })
+    return h(
+      component,
+      props,
+      //() =>
+      //   options.map((item) => {
+      //     let _slots = item.slots;
+      //     if (typeof _slots === "string") {
+      //       _slots = slots[_slots];
+      //     }
+      //     return h(
+      //       optionsComponent,
+      //       // {
+      //       //   label: item.label,
+      //       //   value: item.value,
+      //       // },
+      //       {
+      //         label: item[fieldNames.label],
+      //         value: item[fieldNames.value],
+      //       },
+      //       _slots,
+      //     );
+      //   }),
+      // );
+      {
+        default: () =>
+          options.map((item) => {
+            let _slots = item.slots;
+            if (typeof _slots === "string") {
+              _slots = slots[_slots];
+            }
+            return h(
+              optionsComponent,
+              {
+                label: item[fieldNames.label],
+                value: item[fieldNames.value],
+              },
+              _slots,
+            );
+          }),
+        ...props.slots,
+      },
+    );
   };
 }
+
+const dateTypeMap: Record<string, string> = {
+  data: "date",
+  datetime: "datetime",
+  daterange: "daterange",
+  datetimerange: "datetimerange",
+  month: "month",
+  year: "year",
+};
 
 const componentMap: Record<string, any> = {
   input: ElInput,
   number: ElInputNumber,
-  select: withSlots(transformOptions(ElSelect, ElOption)),
+  textarea: ElInput, // 使用 type="textarea"
+  password: ElInput, // 使用 show-password
+
+  select: transformOptions(ElSelect, ElOption),
   radioGroup: transformOptions(ElRadioGroup, ElRadio),
   checkboxGroup: transformOptions(ElCheckboxGroup, ElCheckbox),
-  date: ElDatePicker,
+
+  date: ElDatePicker, // 单日期
+  datetime: ElDatePicker, // 需设置 type="datetime"
+  daterange: ElDatePicker, // 需设置 type="daterange"
+  datetimerange: ElDatePicker, // 需设置 type="datetimerange"
+  month: ElDatePicker, // 需设置 type="month"
+  year: ElDatePicker, // 需设置 type="year"
+
+  switch: ElSwitch,
+  slider: ElSlider,
+  time: ElTimePicker,
+  timeRange: ElTimePicker, // type="timerange"
+
+  cascader: ElCascader,
+  rate: ElRate,
+  color: ElColorPicker,
+  transfer: ElTransfer,
+  upload: ElUpload,
+
   // mySelect: MySelect
   // 异步导入
   mySelect: defineAsyncComponent(() => {
@@ -127,7 +168,35 @@ const rootProps = ["label", "key", "type", "span"];
 function getProps(item: Record<string, any>) {
   if (item.props) return item.props;
   // rootsProps 不是组件的props，不传给组件
-  return omit(item, rootProps);
+  // return omit(item, rootProps);
+
+  // const props = omit(item, rootProps);
+
+  const props = {
+    ...item.props, // 用户手动设置的优先生效
+    ...omit(item, rootProps), // 去掉非组件属性
+  };
+
+  // 补充 date 类型的 type
+  if (item.type && dateTypeMap[item.type]) {
+    props.type = dateTypeMap[item.type];
+  }
+
+  const timeTypes = ['time', 'timeRange'];
+  if (timeTypes.includes(item.type)) {
+    props.isRange = item.type === 'timeRange';
+    props.type = 'time'; // 基础组件仍然是 time 类型
+  }
+
+  // textarea、password 类型处理
+  if (item.type === "textarea") {
+    props.type = "textarea";
+  }
+  if (item.type === "password") {
+    props.showPassword = true;
+  }
+
+  return props;
 }
 
 provide("formData", formData);
@@ -183,12 +252,11 @@ const ComponentItem = {
         //   }, {} as Record<string, any>),
         // ),
         Object.entries(item.slots || {}).reduce((acc, [slotName, slotValue]) => {
-  if (typeof slotValue === "string" && slots[slotValue]) {
-    acc[slotName] = slots[slotValue];
-  }
-  return acc;
-}, {} as Record<string, any>)
-
+          if (typeof slotValue === "string" && slots[slotValue]) {
+            acc[slotName] = slots[slotValue];
+          }
+          return acc;
+        }, {} as Record<string, any>),
       );
     };
   },

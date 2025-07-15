@@ -1,14 +1,11 @@
 <template>
   <div class="app-page">
     <basic-form>
-      <template #prefixInput>
-        123
-      </template>
-      <template #prependInput>
-        345
-      </template>
-      <template #headerSelect>
-        <span>select</span>
+      <template #prefixInput> input slot </template>
+      <template #headerSelect> select slot </template>
+      <template #optionsLabelSlots> 男 </template>
+      <template #keySlot>
+        <div>keySlot</div>
       </template>
     </basic-form>
     <el-button @click="handelClick">提交</el-button>
@@ -16,45 +13,157 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed} from "vue";
-import { useBasicForm } from './hooks/useBasicForm';
+import { ref, computed } from "vue";
+import { useBasicForm } from "./hooks/useBasicForm";
 
 const formData = ref<any>({
-  input: undefined,
+  data: {
+    input: undefined,
+  },
   select: undefined,
+  number: undefined,
+  radioGroup: 1,
+  keySlot: "",
 });
 
 const formItems = computed(() => [
   {
     label: "姓名",
-    key: "input",
+    key: "data.input",
     type: "input",
+    labelWidth: 110,
     placeholder: "请输入",
     slots: {
-      prefix: 'prefixInput',
-      prepend: 'prependInput'
-    }
+      prefix: "prefixInput",
+    },
+    onInput: () => {
+      console.log("输入了");
+    },
+    value: "初始值",
+    unit: "dm",
+    trim: true,
+    hidden: formData.value.select == 2,
+    span: 24,
+   // rules: [{ required: true, message: "请输入姓名", trigger: "blur" }],
+  },
+    {
+    label: "密码",
+    key: "password",
+    type: "password",
+    placeholder: "请输入",
+  },
+  {
+    label: "数字框",
+    key: "number",
+    type: "number",
+    max: "100",
+    min: "0",
+    placeholder: "请输入",
+    controls: false
+  },
+  {
+    label: "文本框",
+    key: "text",
+    type: "textarea",
+    placeholder: "请输入",
+    resize: "none"
+  },
+  {
+    label: "时间",
+    key: "date",
+    type: "datetime",
+    placeholder: '请输入时间',
+    valueFormat: "YYYY-MM-DD HH:mm:ss"
+  },
+   {
+    label: "switch",
+    key: "switch",
+    type: "switch"
+  },
+    {
+    label: "radioGroup",
+    key: "radioGroup",
+    type: "radioGroup",
+    options: 
+     [
+      { label: 'radio1', value: 1},
+      { label: 'radio2', value: 2}
+     ]
+  },    {
+    label: "checkboxGroup",
+    key: "checkboxGroup",
+    type: "checkboxGroup",
+    options: 
+     [
+      { label: 'box1', value: 1},
+      { label: 'box2', value: 2}
+     ]
+  },
+     {
+    label: "time",
+    key: "time",
+    type: "time",
+    placeholder: '请输入时间',
+  },
+       {
+    label: "timeRange",
+    key: "timeRange",
+    type: "timeRange",
+    rangeSeparator:"To",
+      startPlaceholder:"Start time",
+      endPlaceholder:"End time",
+    // isRange: true
+  },
+    {
+    label: 'rate',
+    key: 'rate',
+    type: 'rate',
+  },
+      {
+    label: 'color',
+    key: 'color',
+    type: 'color',
+  },
+  {
+    label: 'slider',
+    key: 'slider',
+    type: 'slider',
   },
   {
     label: "性别",
     key: "select",
     type: "select",
     placeholder: "请选择",
+    required: true,
+    span: 24,
     options: [
-      { label: "男", value: 1 },
-      { label: "女", value: 2 },
+      { name: "男", id: 1, slots: "optionsLabelSlots" },
+      { name: "女", id: 2 },
     ],
+    fieldNames: {
+      label: "name",
+      value: "id",
+    },
+    onChange: (e) => {
+      console.log(e);
+    },
     slots: {
-      header: 'headerSelect'
-    }
-  }
+      header: "headerSelect",
+    },
+  },
+  {
+    label: "keySlot",
+    key: "keySlot",
+  },
 ]);
 
 const rules = {};
 
-const {basicForm , validate} = useBasicForm({
-  rules, formItems, modelValue: formData
-})
+const { basicForm, validate } = useBasicForm({
+  rules,
+  formItems,
+  modelValue: formData,
+});
 
 const handelClick = async () => {
   await validate();
@@ -65,6 +174,9 @@ const handelClick = async () => {
 <style scoped lang="scss">
 .app-page {
   width: 600px;
+}
+:deep(.el-input-number .el-input__inner) {
+  text-align: left;
 }
 </style>
 
