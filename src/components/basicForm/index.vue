@@ -12,14 +12,24 @@ import {
   ElSelect,
   type FormInstance,
 } from "element-plus";
-import { type Component, computed, defineAsyncComponent, h, provide, type Ref, useSlots, useTemplateRef, watch } from "vue";
+import {
+  type Component,
+  computed,
+  defineAsyncComponent,
+  h,
+  provide,
+  type Ref,
+  useSlots,
+  useTemplateRef,
+  watch,
+} from "vue";
 import { get, omit, set } from "lodash-es";
-import { OptionItem } from './index.d'
+import { OptionItem } from "./index.d";
 import MySelect from "./components/MySelect.vue";
 
 const props = defineProps(["formItems", "rules"]);
 
-const formInstance = useTemplateRef<FormInstance>('formRef')
+const formInstance = useTemplateRef<FormInstance>("formRef");
 
 const formData = defineModel() as Ref<Record<string, any>>;
 
@@ -29,10 +39,40 @@ defineOptions({
 
 const slots = useSlots();
 
+function withSlots(componentFactory: (props: any) => any) {
+  return {
+    setup(_, { attrs, slots }) {
+      return () => componentFactory({ ...attrs, slots });
+    },
+  };
+}
+
 function transformOptions(component: Component, optionsComponent: Component) {
-  return (props: { options: OptionItem[] }) => {
-    const { options = [] } = props;
-    return h(component, props, () =>
+  return (props: { options: OptionItem[]; fieldNames?: { label: string; value: string | number } }) => {
+    const { options = [], fieldNames = { label: "label", value: "value" } } = props;
+     return h(component, props, 
+     //() =>
+    //   options.map((item) => {
+    //     let _slots = item.slots;
+    //     if (typeof _slots === "string") {
+    //       _slots = slots[_slots];
+    //     }
+    //     return h(
+    //       optionsComponent,
+    //       // {
+    //       //   label: item.label,
+    //       //   value: item.value,
+    //       // },
+    //       {
+    //         label: item[fieldNames.label],
+    //         value: item[fieldNames.value],
+    //       },
+    //       _slots,
+    //     );
+    //   }),
+    // );
+    {
+    default: () =>
       options.map((item) => {
         let _slots = item.slots;
         if (typeof _slots === "string") {
@@ -41,20 +81,21 @@ function transformOptions(component: Component, optionsComponent: Component) {
         return h(
           optionsComponent,
           {
-            label: item.label,
-            value: item.value,
+            label: item[fieldNames.label],
+            value: item[fieldNames.value],
           },
           _slots,
         );
       }),
-    );
+    ...props.slots,
+  })
   };
 }
 
 const componentMap: Record<string, any> = {
   input: ElInput,
   number: ElInputNumber,
-  select: transformOptions(ElSelect, ElOption),
+  select: withSlots(transformOptions(ElSelect, ElOption)),
   radioGroup: transformOptions(ElRadioGroup, ElRadio),
   checkboxGroup: transformOptions(ElCheckboxGroup, ElCheckbox),
   date: ElDatePicker,
@@ -89,7 +130,7 @@ function getProps(item: Record<string, any>) {
   return omit(item, rootProps);
 }
 
-provide('formData', formData)
+provide("formData", formData);
 
 const items = computed(() => props.formItems.filter((item) => !item.hidden));
 
@@ -110,38 +151,44 @@ const ComponentItem = {
       const { item } = props;
       /**
        * MutableHandler
-       * 
+       *
        */
       return h(
         // 表单 type 组件
         getComponent(item),
         {
-
           // v-model
           modelValue: get(formData.value, item.key),
           "onUpdate:modelValue": (value: any) => {
             if (item.trim) {
-              value = value.trim()
+              value = value.trim();
             }
             // formData.value[item.key] = value;
-            set(formData.value, item.key, value)
+            set(formData.value, item.key, value);
           },
           ...getProps(item),
           // ...reactive(getProps(item))
 
-          formData: formData.value // 透传自定义组件
+          formData: formData.value, // 透传自定义组件
         },
-        Object.assign(
-          item.slots || {},
-          Object.entries(item.slots || {}).reduce((acc, [key, value]) => {
-            if (typeof value === "string") {
-              if (slots[value]) {
-                acc[key] = slots[value];
-              }
-            }
-            return acc;
-          }, {} as Record<string, any>),
-        ),
+        // Object.assign(
+        //   item.slots || {},
+        //   Object.entries(item.slots || {}).reduce((acc, [key, value]) => {
+        //     if (typeof value === "string") {
+        //       if (slots[value]) {
+        //         acc[key] = slots[value];
+        //       }
+        //     }
+        //     return acc;
+        //   }, {} as Record<string, any>),
+        // ),
+        Object.entries(item.slots || {}).reduce((acc, [slotName, slotValue]) => {
+  if (typeof slotValue === "string" && slots[slotValue]) {
+    acc[slotName] = slots[slotValue];
+  }
+  return acc;
+}, {} as Record<string, any>)
+
       );
     };
   },
@@ -150,28 +197,27 @@ const ComponentItem = {
 watch(
   () => props.formItems,
   (newItems) => {
-    newItems.forEach(item => {
+    newItems.forEach((item) => {
       if (item.hidden && item.key && formData.value.hasOwnProperty(item.key)) {
         delete formData.value[item.key];
       }
     });
   },
-  { deep: true }
+  { deep: true },
 );
-
 
 defineExpose({
   validate(...args) {
-    return formInstance.value?.validate(...args)
+    return formInstance.value?.validate(...args);
   },
   resetFields() {
-    return formInstance.value?.resetFields()
+    return formInstance.value?.resetFields();
   },
   /**
-  * 获取表单值
-  * - 不传参数时，返回所有字段
-  * - 传字段名数组时，返回指定字段（支持嵌套路径）
-  */
+   * 获取表单值
+   * - 不传参数时，返回所有字段
+   * - 传字段名数组时，返回指定字段（支持嵌套路径）
+   */
   // 获取全部字段值
   // const allValues = getFieldsValue();
   // // 获取部分字段值（支持嵌套）
@@ -206,7 +252,7 @@ defineExpose({
   // await validateFields(['username', 'age']);
   validateFields(nameList?: (string | number)[]): Promise<any> {
     return new Promise((resolve, reject) => {
-      if (!formInstance.value) return reject('表单实例不存在');
+      if (!formInstance.value) return reject("表单实例不存在");
 
       if (!nameList || nameList.length === 0) {
         formInstance.value.validate((valid, fields) => {
@@ -238,13 +284,11 @@ defineExpose({
   // await clearValidate('username'); // 清除某一项
   // await clearValidate(['username', 'password']); // 清除多项
   clearValidate(name?: string | string[]): Promise<void> {
-    if (!formInstance.value) return Promise.reject('表单实例不存在');
+    if (!formInstance.value) return Promise.reject("表单实例不存在");
     formInstance.value.clearValidate(name);
     return Promise.resolve();
-  }
-
-
-})
+  },
+});
 
 const innerRules = computed(() => {
   const mergedRules = { ...props.rules };
@@ -254,16 +298,15 @@ const innerRules = computed(() => {
       mergedRules[item.key] = item.rules;
     } else if (item.required) {
       const isSelectLike =
-        ['select', 'radioGroup', 'checkboxGroup'].includes(item.type) ||
-        item.type?.includes('picker');
+        ["select", "radioGroup", "checkboxGroup"].includes(item.type) || item.type?.includes("picker");
 
-      const actionWord = isSelectLike ? '请选择' : '请输入';
+      const actionWord = isSelectLike ? "请选择" : "请输入";
 
       mergedRules[item.key] = [
         {
           required: true,
           message: item.message || `${actionWord}${item.label || item.key}`,
-          trigger: isSelectLike ? 'change' : 'blur',
+          trigger: isSelectLike ? "change" : "blur",
         },
       ];
     }
@@ -272,26 +315,20 @@ const innerRules = computed(() => {
   return mergedRules;
 });
 
-
 function getFormItemProps(item: Record<string, any>) {
   const allowedProps = [
-    'labelWidth',
-    'required',
-    'rules',
-    'error',
-    'showMessage',
-    'inlineMessage',
-    'size',
-    'labelPosition',
-    'labelSuffix',
+    "labelWidth",
+    "required",
+    "rules",
+    "error",
+    "showMessage",
+    "inlineMessage",
+    "size",
+    "labelPosition",
+    "labelSuffix",
   ];
-  return Object.fromEntries(
-    allowedProps.filter((key) => key in item).map((key) => [key, item[key]])
-  );
+  return Object.fromEntries(allowedProps.filter((key) => key in item).map((key) => [key, item[key]]));
 }
-
-
-
 </script>
 
 <template>
@@ -319,7 +356,7 @@ function getFormItemProps(item: Record<string, any>) {
   width: 100%;
 
   .component-item {
-    width: 100%
+    width: 100%;
   }
 
   .unit-text {
@@ -331,3 +368,4 @@ function getFormItemProps(item: Record<string, any>) {
   }
 }
 </style>
+

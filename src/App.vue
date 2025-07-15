@@ -1,12 +1,22 @@
 <template>
   <div class="app-page">
-    <basic-form></basic-form>
+    <basic-form>
+      <template #prefixInput>
+        123
+      </template>
+      <template #prependInput>
+        345
+      </template>
+      <template #headerSelect>
+        <span>select</span>
+      </template>
+    </basic-form>
     <el-button @click="handelClick">提交</el-button>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, h} from "vue";
+import { ref, computed} from "vue";
 import { useBasicForm } from './hooks/useBasicForm';
 
 const formData = ref<any>({
@@ -20,6 +30,10 @@ const formItems = computed(() => [
     key: "input",
     type: "input",
     placeholder: "请输入",
+    slots: {
+      prefix: 'prefixInput',
+      prepend: 'prependInput'
+    }
   },
   {
     label: "性别",
@@ -29,13 +43,14 @@ const formItems = computed(() => [
     options: [
       { label: "男", value: 1 },
       { label: "女", value: 2 },
-    ]
+    ],
+    slots: {
+      header: 'headerSelect'
+    }
   }
 ]);
 
-const rules = {
-  //input: [{ required: true, message: "rules", trigger: "blur" }]
-};
+const rules = {};
 
 const {basicForm , validate} = useBasicForm({
   rules, formItems, modelValue: formData
@@ -50,7 +65,6 @@ const handelClick = async () => {
 <style scoped lang="scss">
 .app-page {
   width: 600px;
-  border: 1px solid #999;
 }
 </style>
 
