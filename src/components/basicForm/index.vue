@@ -194,6 +194,16 @@ function getProps(item: Record<string, any>) {
     props.showPassword = true;
   }
 
+  // ✅ 支持函数式 disabled
+  if (typeof props.disabled === "function") {
+    props.disabled = props.disabled(formData.value);
+  }
+
+  // ✅ 支持函数式 options
+  if (typeof props.options === "function") {
+    props.options = props.options(formData.value);
+  }
+
   return props;
 }
 
@@ -206,7 +216,71 @@ props.formItems.forEach((item) => {
   }
 });
 
-const items = computed(() => props.formItems.filter((item) => !item.hidden));
+// const items = computed(() => props.formItems.filter((item) => !item.hidden));
+// const items = computed(() =>
+//   props.formItems.filter((item) => {
+//     // 如果有 if 条件函数，动态控制显隐
+//     if (typeof item.if === 'function') {
+//       return item.if(formData.value);
+//     }
+//     return !item.hidden;
+//   }),
+// );
+// const items = computed(() =>
+//   props.formItems
+//     .map((item) => {
+//       const clone = { ...item };
+
+//       // 动态控制 hidden（显隐）
+//       if (typeof clone.if === 'function') {
+//         clone.hidden = !clone.if(formData.value);
+//       }
+
+//       // 动态控制 options（下拉选项）
+//       if (typeof clone.options === 'function') {
+//         clone.options = clone.options(formData.value);
+//       }
+
+//       // 动态控制 disabled
+//       if (typeof clone.disabled === 'function') {
+//         clone.disabled = clone.disabled(formData.value);
+//       }
+
+//       return clone;
+//     })
+//     .filter((item) => !item.hidden),
+// );
+const resolveItem = (item: any, formData: any) => {
+  const clone = { ...item };
+
+  typeof clone.if === 'function' && (clone.hidden = !clone.if(formData));  // 判断是否应该隐藏字段
+  typeof clone.disabled === 'function' && (clone.disabled = clone.disabled(formData));  // 断该字段是否应被禁用
+
+  // 字段选项联动
+  if (typeof clone.options === 'function') {
+    const oldOptions = item._lastResolvedOptions || [];
+    const newOptions = clone.options(formData);
+    clone.options = newOptions;
+
+    const changed = JSON.stringify(oldOptions) !== JSON.stringify(newOptions);
+    const needReset = changed && formData[clone.key] != null;
+
+    needReset && (formData[clone.key] = undefined);
+    item._lastResolvedOptions = newOptions;
+  }
+
+  return clone;
+};
+
+
+const items = computed(() =>
+  props.formItems
+    .map(item => resolveItem(item, formData.value))
+    .filter(item => !item.hidden)
+);
+
+
+
 
 // 组件动态渲染 支持直接传入组件
 function getComponent(item: Record<string, any>) {
@@ -280,6 +354,16 @@ watch(
   },
   { deep: true },
 );
+
+watch(
+  () => formData.value,
+  () => {
+    // formData 变动后会自动刷新 items 和 props（因为是 computed）
+    // 这里不需要额外做事，但必须加 watch 保证响应式连通性
+  },
+  { deep: true }
+);
+
 
 // 暴露的api方法
 defineExpose({

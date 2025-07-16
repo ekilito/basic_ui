@@ -124,6 +124,7 @@ const formItems = computed(() => [
     label: "rate",
     key: "rate",
     type: "rate",
+    disabled: true
   },
   {
     label: "color",
@@ -150,13 +151,31 @@ const formItems = computed(() => [
       label: "name",
       value: "id",
     },
-    onChange: (value, formData) => {
+    onChange: (value) => {
       // 联动
-      console.log(value, formData);
+      console.log(value, formData.value);
     },
     slots: {
       header: "headerSelect",
     },
+  },
+   {
+    label: "城市",
+    key: "city",
+    type: "select",
+    placeholder: 'please select',
+    options: (formData) => {
+      if (formData.select == "1") return [{ label: "海淀", value: 1 }];
+      if (formData.select == "2") return [{ label: "浦东", value: 2 }];
+      return [];
+    },
+    if: (formData) => !!formData.select, 
+  },
+   {
+    label: "街道",
+    key: "street",
+    type: "input",
+    disabled: (formData) => !formData.city, // 没有选择城市就禁用
   },
   {
     label: "treeSelect",
