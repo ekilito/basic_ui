@@ -22,6 +22,7 @@ const formData = ref<any>({
   },
   select: undefined,
   number: undefined,
+  switch: false,
   radioGroup: 1,
   keySlot: "",
 });
@@ -39,7 +40,7 @@ const formItems = computed(() => [
     onInput: () => {
       console.log("输入了");
     },
-    value: "初始值",
+    defaultValue: 'defaultValue',
     unit: "dm",
     trim: true,
     hidden: formData.value.select == 2,
@@ -51,6 +52,7 @@ const formItems = computed(() => [
     key: "password",
     type: "password",
     placeholder: "请输入",
+    defaultValue: '123456',
   },
   {
     label: "数字框",
@@ -73,7 +75,7 @@ const formItems = computed(() => [
     key: "date",
     type: "datetime",
     placeholder: "请输入时间",
-    valueFormat: "YYYY-MM-DD HH:mm:ss",
+    valueFormat: "YYYY-MM-DD HH:mm:ss"
   },
   {
     label: "switch",
@@ -103,6 +105,7 @@ const formItems = computed(() => [
     key: "time",
     type: "time",
     placeholder: "请输入时间",
+    disabled: formData.value.switch === true,
   },
   {
     label: "timeRange",
@@ -143,9 +146,10 @@ const formItems = computed(() => [
       label: "name",
       value: "id",
     },
-    onChange: (e) => {
-      console.log(e);
-    },
+   onChange: (value, formData) => {
+    // 联动
+    console.log(value,formData)
+  },
     slots: {
       header: "headerSelect",
     },

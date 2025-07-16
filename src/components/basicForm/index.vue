@@ -99,7 +99,8 @@ function transformOptions(component: Component, optionsComponent: Component) {
               _slots,
             );
           }),
-        ...props.slots,
+        // ...props.slots,
+        ...(props.slots ?? {}) // 显式合并具名插槽
       },
     );
   };
@@ -194,6 +195,17 @@ function getProps(item: Record<string, any>) {
 
 provide("formData", formData);
 
+// 设置默认值 （只会初始化时执行一次）
+props.formItems.forEach((item) => {
+  if (
+    item.key &&
+    item.defaultValue !== undefined &&
+    get(formData.value, item.key) === undefined
+  ) {
+    set(formData.value, item.key, item.defaultValue);
+  }
+});
+
 const items = computed(() => props.formItems.filter((item) => !item.hidden));
 
 // 组件动态渲染 支持直接传入组件
@@ -256,6 +268,8 @@ const ComponentItem = {
   },
 };
 
+
+// 清理隐藏字段的值
 watch(
   () => props.formItems,
   (newItems) => {
