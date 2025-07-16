@@ -58,7 +58,11 @@ function withSlots(componentFactory: (props: any) => any) {
 }
 
 function transformOptions(component: Component, optionsComponent: Component) {
-  return (props: { options: OptionItem[]; fieldNames?: { label: string; value: string | number } ; slots?: Record<string, any>;  }) => {
+  return (props: {
+    options: OptionItem[];
+    fieldNames?: { label: string; value: string | number };
+    slots?: Record<string, any>;
+  }) => {
     const { options = [], fieldNames = { label: "label", value: "value" } } = props;
     return h(
       component,
@@ -100,7 +104,7 @@ function transformOptions(component: Component, optionsComponent: Component) {
             );
           }),
         // ...props.slots,
-        ...(props.slots ?? {}) // 显式合并具名插槽
+        ...(props.slots ?? {}), // 显式合并具名插槽
       },
     );
   };
@@ -111,7 +115,7 @@ const componentMap: Record<string, any> = {
   input: ElInput,
   number: ElInputNumber,
   textarea: ElInput,
-  password: ElInput, 
+  password: ElInput,
 
   select: transformOptions(ElSelect, ElOption),
   radioGroup: transformOptions(ElRadioGroup, ElRadio),
@@ -119,17 +123,17 @@ const componentMap: Record<string, any> = {
 
   treeSelect: ElTreeSelect,
 
-  date: ElDatePicker, 
-  datetime: ElDatePicker, 
-  daterange: ElDatePicker, 
-  datetimerange: ElDatePicker, 
-  month: ElDatePicker, 
+  date: ElDatePicker,
+  datetime: ElDatePicker,
+  daterange: ElDatePicker,
+  datetimerange: ElDatePicker,
+  month: ElDatePicker,
   year: ElDatePicker,
 
   switch: ElSwitch,
   slider: ElSlider,
   time: ElTimePicker,
-  timeRange: ElTimePicker, 
+  timeRange: ElTimePicker,
 
   cascader: ElCascader,
   rate: ElRate,
@@ -176,10 +180,10 @@ function getProps(item: Record<string, any>) {
     props.type = dateTypeMap[item.type];
   }
 
-  const timeTypes = ['time', 'timeRange'];
+  const timeTypes = ["time", "timeRange"];
   if (timeTypes.includes(item.type)) {
-    props.isRange = item.type === 'timeRange';
-    props.type = 'time'; 
+    props.isRange = item.type === "timeRange";
+    props.type = "time";
   }
 
   // textarea、password 类型处理
@@ -197,11 +201,7 @@ provide("formData", formData);
 
 // 设置默认值 （只会初始化时执行一次）
 props.formItems.forEach((item) => {
-  if (
-    item.key &&
-    item.defaultValue !== undefined &&
-    get(formData.value, item.key) === undefined
-  ) {
+  if (item.key && item.defaultValue !== undefined && get(formData.value, item.key) === undefined) {
     set(formData.value, item.key, item.defaultValue);
   }
 });
@@ -267,7 +267,6 @@ const ComponentItem = {
     };
   },
 };
-
 
 // 清理隐藏字段的值
 watch(
@@ -411,16 +410,31 @@ function getFormItemProps(item: Record<string, any>) {
 <template>
   <el-form ref="formRef" :model="formData" :rules="innerRules" label-width="100px" label-suffix="：">
     <el-row :gutter="10">
-      <el-col v-for="item in items" :key="item.key" :span="item.span || 24">
-        <el-form-item :label="item.label" :prop="item.key" v-bind="getFormItemProps(item)">
-          <slot :name="item.key">
-            <div class="form-item">
-              <ComponentItem :item="item" class="component-item"></ComponentItem>
-              <span v-if="item.unit" class="unit-text">{{ item.unit }}</span>
-            </div>
-          </slot>
-          <!-- <component :is="getComponent(item)" v-model="formData[item.key]" v-bind="getProps(item)"></component> -->
-        </el-form-item>
+      <el-col v-for="(item, index) in items" :key="item.key || item.type + index" :span="item.span || 24">
+
+        <template v-if="item.type === 'divider'">
+          <div class="form-divider"></div>
+        </template>
+
+        <template v-else-if="item.type === 'title'">
+          <div class="form-title">{{ item.label }}</div>
+        </template>
+
+        <template v-else-if="item.type === 'blank'">
+          <div class="form-blank"></div>
+        </template>
+
+        <template v-else>
+          <el-form-item :label="item.label" :prop="item.key" v-bind="getFormItemProps(item)">
+            <slot :name="item.key">
+              <div class="form-item">
+                <ComponentItem :item="item" class="component-item"></ComponentItem>
+                <span v-if="item.unit" class="unit-text">{{ item.unit }}</span>
+              </div>
+            </slot>
+            <!-- <component :is="getComponent(item)" v-model="formData[item.key]" v-bind="getProps(item)"></component> -->
+          </el-form-item>
+        </template>
       </el-col>
     </el-row>
   </el-form>
@@ -443,6 +457,24 @@ function getFormItemProps(item: Record<string, any>) {
     font-size: 16px;
     white-space: nowrap;
   }
+}
+
+.form-divider {
+  border-bottom: 1px solid #e0e0e0;
+  margin: 16px 0;
+  width: 100%;
+}
+
+.form-title {
+  font-weight: 600;
+  font-size: 18px;
+  padding: 8px 0;
+  color: #333;
+  margin-left: 10px;
+}
+
+.form-blank {
+  height: 24px; /* 空白高度，自己调 */
 }
 </style>
 

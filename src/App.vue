@@ -28,6 +28,7 @@ const formData = ref<any>({
 });
 
 const formItems = computed(() => [
+  { type: "title", label: "个人信息" },
   {
     label: "姓名",
     key: "data.input",
@@ -40,19 +41,22 @@ const formItems = computed(() => [
     onInput: () => {
       console.log("输入了");
     },
-    defaultValue: 'defaultValue',
+    defaultValue: "defaultValue",
     unit: "dm",
     trim: true,
     hidden: formData.value.select == 2,
     span: 24,
     // rules: [{ required: true, message: "请输入姓名", trigger: "blur" }],
   },
+  { type: "divider" },
+  { type: "blank" },
+
   {
     label: "密码",
     key: "password",
     type: "password",
     placeholder: "请输入",
-    defaultValue: '123456',
+    defaultValue: "123456",
   },
   {
     label: "数字框",
@@ -75,7 +79,7 @@ const formItems = computed(() => [
     key: "date",
     type: "datetime",
     placeholder: "请输入时间",
-    valueFormat: "YYYY-MM-DD HH:mm:ss"
+    valueFormat: "YYYY-MM-DD HH:mm:ss",
   },
   {
     label: "switch",
@@ -146,10 +150,10 @@ const formItems = computed(() => [
       label: "name",
       value: "id",
     },
-   onChange: (value, formData) => {
-    // 联动
-    console.log(value,formData)
-  },
+    onChange: (value, formData) => {
+      // 联动
+      console.log(value, formData);
+    },
     slots: {
       header: "headerSelect",
     },
