@@ -194,15 +194,15 @@ function getProps(item: Record<string, any>) {
     props.showPassword = true;
   }
 
-  // ✅ 支持函数式 disabled
-  if (typeof props.disabled === "function") {
-    props.disabled = props.disabled(formData.value);
-  }
+  // // ✅ 支持函数式 disabled
+  // if (typeof props.disabled === "function") {
+  //   props.disabled = props.disabled(formData.value);
+  // }
 
-  // ✅ 支持函数式 options
-  if (typeof props.options === "function") {
-    props.options = props.options(formData.value);
-  }
+  // // ✅ 支持函数式 options
+  // if (typeof props.options === "function") {
+  //   props.options = props.options(formData.value);
+  // }
 
   return props;
 }
@@ -250,27 +250,33 @@ props.formItems.forEach((item) => {
 //     })
 //     .filter((item) => !item.hidden),
 // );
+const lastOptionsCache = new Map<string, any[]>();
+
 const resolveItem = (item: any, formData: any) => {
   const clone = { ...item };
 
-  typeof clone.if === 'function' && (clone.hidden = !clone.if(formData));  // 判断是否应该隐藏字段
-  typeof clone.disabled === 'function' && (clone.disabled = clone.disabled(formData));  // 断该字段是否应被禁用
+  typeof clone.if === 'function' && (clone.hidden = !clone.if(formData));
+  typeof clone.disabled === 'function' && (clone.disabled = clone.disabled(formData));
 
-  // 字段选项联动
   if (typeof clone.options === 'function') {
-    const oldOptions = item._lastResolvedOptions || [];
+    const oldOptions = lastOptionsCache.get(clone.key) || [];
     const newOptions = clone.options(formData);
     clone.options = newOptions;
 
     const changed = JSON.stringify(oldOptions) !== JSON.stringify(newOptions);
-    const needReset = changed && formData[clone.key] != null;
+    const needReset = changed && get(formData, clone.key) != null;
 
-    needReset && (formData[clone.key] = undefined);
-    item._lastResolvedOptions = newOptions;
+    if (needReset) {
+      set(formData, clone.key, undefined);
+    }
+
+    lastOptionsCache.set(clone.key, newOptions);
   }
 
   return clone;
 };
+
+
 
 
 const items = computed(() =>
@@ -343,23 +349,36 @@ const ComponentItem = {
 };
 
 // 清理隐藏字段的值
+// watch(
+//   () => props.formItems,
+//   (newItems) => {
+//     newItems.forEach((item) => {
+//       if (item.hidden && item.key && formData.value.hasOwnProperty(item.key)) {
+//         delete formData.value[item.key];
+//       }
+//     });
+//   },
+//   { deep: true },
+// );
 watch(
-  () => props.formItems,
+  items,
   (newItems) => {
-    newItems.forEach((item) => {
-      if (item.hidden && item.key && formData.value.hasOwnProperty(item.key)) {
-        delete formData.value[item.key];
+    const visibleKeySet = new Set(newItems.map(i => i.key));
+    Object.keys(formData.value).forEach(key => {
+      if (!visibleKeySet.has(key)) {
+        delete formData.value[key];
       }
     });
-  },
-  { deep: true },
+  }
 );
+
 
 watch(
   () => formData.value,
   () => {
     // formData 变动后会自动刷新 items 和 props（因为是 computed）
     // 这里不需要额外做事，但必须加 watch 保证响应式连通性
+     lastOptionsCache.clear(); // 防止缓存数据过时
   },
   { deep: true }
 );
@@ -512,7 +531,7 @@ function getFormItemProps(item: Record<string, any>) {
           <el-form-item :label="item.label" :prop="item.key" v-bind="getFormItemProps(item)">
             <slot :name="item.key">
               <div class="form-item">
-                <ComponentItem :item="item" class="component-item"></ComponentItem>
+                <ComponentItem :key="item.key" :item="item" class="component-item"></ComponentItem>
                 <span v-if="item.unit" class="unit-text">{{ item.unit }}</span>
               </div>
             </slot>

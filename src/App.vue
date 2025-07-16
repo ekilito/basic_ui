@@ -57,6 +57,7 @@ const formItems = computed(() => [
     type: "password",
     placeholder: "请输入",
     defaultValue: "123456",
+     hidden: formData.value.select == 2,
   },
   {
     label: "数字框",
