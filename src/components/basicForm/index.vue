@@ -504,7 +504,8 @@ function getFormItemProps(item: Record<string, any>) {
     "inlineMessage",
     "size",
     "labelPosition",
-    "labelSuffix",
+    "for",
+    "validateStatus"
   ];
   return Object.fromEntries(allowedProps.filter((key) => key in item).map((key) => [key, item[key]]));
 }
