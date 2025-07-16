@@ -151,53 +151,71 @@ const formItems = computed(() => [
     },
   },
   {
+    label: "treeSelect",
+    key: "treeSelect",
+    type: "treeSelect",
+    // treeSelect 多包一层props（如果传了props格式化data字段， 需要包一层props）
+    props: {
+      placeholder: "请选择",
+      data: [
+        {
+          id: "1",
+          name: "Level one 1",
+          children: [
+            {
+              id: "1-1",
+              name: "Level two 1-1",
+              children: [
+                {
+                  id: "1-1-1",
+                  name: "Level three 1-1-1",
+                },
+              ],
+            },
+          ],
+        },
+      ],
+      props: {
+        label: "name",
+        value: "id",
+        children: "children",
+      },
+    },
+  },
+  {
     label: "cascader",
     key: "cascader",
     type: "cascader",
-    options: [
-      {
-        value: "guide",
-        label: "Guide",
-        children: [
-          {
-            value: "disciplines",
-            label: "Disciplines",
-            children: [
-              {
-                value: "consistency",
-                label: "Consistency",
-              },
-              {
-                value: "feedback",
-                label: "Feedback",
-              },
-              {
-                value: "efficiency",
-                label: "Efficiency",
-              },
-              {
-                value: "controllability",
-                label: "Controllability",
-              },
-            ],
-          },
-          {
-            value: "navigation",
-            label: "Navigation",
-            children: [
-              {
-                value: "side nav",
-                label: "Side Navigation",
-              },
-              {
-                value: "top nav",
-                label: "Top Navigation",
-              },
-            ],
-          },
-        ],
+    // 如果传了props格式化字段，需要包一层props
+    props: {
+      placeholder: "please select",
+      options: [
+        {
+          id: "guide",
+          name: "Guide",
+          children: [
+            {
+              id: "disciplines",
+              name: "Disciplines",
+              children: [
+                {
+                  id: "consistency",
+                  name: "Consistency",
+                },
+                {
+                  id: "feedback",
+                  name: "Feedback",
+                },
+              ],
+            },
+          ],
+        },
+      ],
+      props: {
+        label: "name",
+        value: "id",
       },
-    ],
+    },
   },
   {
     label: "transfer",
@@ -209,16 +227,6 @@ const formItems = computed(() => [
       { key: 3, label: "Option 3", disabled: false },
       { key: 4, label: "Option 4", disabled: true },
       { key: 5, label: "Option 5", disabled: false },
-      { key: 6, label: "Option 6", disabled: false },
-      { key: 7, label: "Option 7", disabled: false },
-      { key: 8, label: "Option 8", disabled: true },
-      { key: 9, label: "Option 9", disabled: false },
-      { key: 10, label: "Option 10", disabled: false },
-      { key: 11, label: "Option 11", disabled: false },
-      { key: 12, label: "Option 12", disabled: true },
-      { key: 13, label: "Option 13", disabled: false },
-      { key: 14, label: "Option 14", disabled: false },
-      { key: 15, label: "Option 15", disabled: false },
     ],
   },
   {

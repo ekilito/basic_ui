@@ -17,6 +17,7 @@ import {
   ElSwitch,
   ElTimePicker,
   ElTransfer,
+  ElTreeSelect,
   ElUpload,
   type FormInstance,
 } from "element-plus";
@@ -39,6 +40,7 @@ const props = defineProps(["formItems", "rules"]);
 
 const formInstance = useTemplateRef<FormInstance>("formRef");
 
+// 双向绑定
 const formData = defineModel() as Ref<Record<string, any>>;
 
 defineOptions({
@@ -103,15 +105,7 @@ function transformOptions(component: Component, optionsComponent: Component) {
   };
 }
 
-const dateTypeMap: Record<string, string> = {
-  data: "date",
-  datetime: "datetime",
-  daterange: "daterange",
-  datetimerange: "datetimerange",
-  month: "month",
-  year: "year",
-};
-
+// 组件映射
 const componentMap: Record<string, any> = {
   input: ElInput,
   number: ElInputNumber,
@@ -121,6 +115,8 @@ const componentMap: Record<string, any> = {
   select: transformOptions(ElSelect, ElOption),
   radioGroup: transformOptions(ElRadioGroup, ElRadio),
   checkboxGroup: transformOptions(ElCheckboxGroup, ElCheckbox),
+
+  treeSelect: ElTreeSelect,
 
   date: ElDatePicker, 
   datetime: ElDatePicker, 
@@ -149,6 +145,15 @@ const componentMap: Record<string, any> = {
       }, 500);
     });
   }),
+};
+
+const dateTypeMap: Record<string, string> = {
+  data: "date",
+  datetime: "datetime",
+  daterange: "daterange",
+  datetimerange: "datetimerange",
+  month: "month",
+  year: "year",
 };
 
 const rootProps = ["label", "key", "type", "span"];
@@ -191,6 +196,7 @@ provide("formData", formData);
 
 const items = computed(() => props.formItems.filter((item) => !item.hidden));
 
+// 组件动态渲染 支持直接传入组件
 function getComponent(item: Record<string, any>) {
   const { type } = item;
   if (type === undefined) return ElInput;
@@ -262,6 +268,7 @@ watch(
   { deep: true },
 );
 
+// 暴露的api方法
 defineExpose({
   validate(...args) {
     return formInstance.value?.validate(...args);
