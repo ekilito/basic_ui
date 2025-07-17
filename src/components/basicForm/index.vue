@@ -34,7 +34,6 @@ import {
 } from "vue";
 import { get, omit, set } from "lodash-es";
 import { OptionItem } from "./index.d";
-import MySelect from "./components/MySelect.vue";
 
 const props = defineProps(["formItems", "rules"]);
 
