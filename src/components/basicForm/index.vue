@@ -255,19 +255,27 @@ const lastOptionsCache = new Map<string, any[]>();
 const resolveItem = (item: any, formData: any) => {
   const clone = { ...item };
 
-  typeof clone.if === 'function' && (clone.hidden = !clone.if(formData));
-  typeof clone.disabled === 'function' && (clone.disabled = clone.disabled(formData));
+  typeof clone.if === "function" && (clone.hidden = !clone.if(formData));
+  typeof clone.disabled === "function" && (clone.disabled = clone.disabled(formData));
 
-  if (typeof clone.options === 'function') {
-    const oldOptions = lastOptionsCache.get(clone.key) || [];
+  if (typeof clone.options === "function") {
+    //const oldOptions = lastOptionsCache.get(clone.key) || [];
     const newOptions = clone.options(formData);
     clone.options = newOptions;
 
-    const changed = JSON.stringify(oldOptions) !== JSON.stringify(newOptions);
-    const needReset = changed && get(formData, clone.key) != null;
+    // 不自动清空值
+    // const changed = JSON.stringify(oldOptions) !== JSON.stringify(newOptions);
+    // const needReset = changed && get(formData, clone.key) != null;
 
-    if (needReset) {
-      set(formData, clone.key, undefined);
+    // if (needReset) {
+    //   set(formData, clone.key, undefined);
+    // }
+    // 新选项里不包含旧值时，才清空
+    const oldValue = get(formData, clone.key);
+    const optionValues = newOptions.map((opt) => opt.value ?? opt.id ?? opt.key);
+    // 如果旧值不在新选项中，就清空为 null
+    if (oldValue != null && !optionValues.includes(oldValue)) {
+      set(formData, clone.key, null); // 更安全
     }
 
     lastOptionsCache.set(clone.key, newOptions);
@@ -276,17 +284,9 @@ const resolveItem = (item: any, formData: any) => {
   return clone;
 };
 
-
-
-
 const items = computed(() =>
-  props.formItems
-    .map(item => resolveItem(item, formData.value))
-    .filter(item => !item.hidden)
+  props.formItems.map((item) => resolveItem(item, formData.value)).filter((item) => !item.hidden),
 );
-
-
-
 
 // 组件动态渲染 支持直接传入组件
 function getComponent(item: Record<string, any>) {
@@ -373,17 +373,15 @@ const ComponentItem = {
 //   }
 // );
 
-
 watch(
   () => formData.value,
   () => {
     // formData 变动后会自动刷新 items 和 props（因为是 computed）
     // 这里不需要额外做事，但必须加 watch 保证响应式连通性
-     lastOptionsCache.clear(); // 防止缓存数据过时
+    lastOptionsCache.clear(); // 防止缓存数据过时
   },
-  { deep: true }
+  { deep: true },
 );
-
 
 // 暴露的api方法
 defineExpose({
@@ -506,7 +504,7 @@ function getFormItemProps(item: Record<string, any>) {
     "size",
     "labelPosition",
     "for",
-    "validateStatus"
+    "validateStatus",
   ];
   return Object.fromEntries(allowedProps.filter((key) => key in item).map((key) => [key, item[key]]));
 }
@@ -516,7 +514,6 @@ function getFormItemProps(item: Record<string, any>) {
   <el-form ref="formRef" :model="formData" :rules="innerRules" label-width="100px" label-suffix="：">
     <el-row :gutter="10">
       <el-col v-for="(item, index) in items" :key="item.key || item.type + index" :span="item.span || 24">
-
         <template v-if="item.type === 'divider'">
           <div class="form-divider"></div>
         </template>

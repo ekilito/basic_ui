@@ -18,19 +18,19 @@ import { useBasicForm } from "./hooks/useBasicForm";
 
 const formData = ref<any>({
   data: {
-    input: '',
+    input: "",
   },
-  password: '123',
-  number: '',
-  text: '',
-  time: '',
-   switch: false,
- radioGroup: 1,
- checkboxGroup: '',
-  select: '',
-  city: '',
-  jd: '',
-  treeSelect: '',
+  password: "123",
+  number: undefined,
+  text: "",
+  time: "",
+  switch: false,
+  radioGroup: 1,
+  checkboxGroup: undefined,
+  select: "",
+  city: "",
+  jd: "",
+  treeSelect: "",
   keySlot: "",
 });
 
@@ -51,9 +51,8 @@ const formItems = computed(() => [
     defaultValue: "defaultValue",
     unit: "dm",
     trim: true,
-    if:(formData) => !(formData.select == 2),
-    required:true,
-    // rules: [{ required: true, message: "请输入姓名", trigger: "blur" }],
+    if: (formData) => !(formData.select == 2),
+    rules: [{ required: true, message: "请输入姓名", trigger: "blur" }],
   },
   { type: "divider" },
   { type: "blank" },
@@ -63,8 +62,7 @@ const formItems = computed(() => [
     key: "password",
     type: "password",
     placeholder: "请输入",
-    // defaultValue: "123456",
-    if:(formData) => formData.select != 2,
+    if: (formData) => formData.select != 2,
   },
   {
     label: "数字框",
@@ -74,7 +72,8 @@ const formItems = computed(() => [
     min: "0",
     placeholder: "请输入",
     controls: false,
-       rules: [{ required: true, message: "请输入姓名", trigger: "blur" }],
+    defaultValue: 66,
+    rules: [{ required: true, message: "请输入姓名", trigger: "blur" }],
   },
   {
     label: "文本框",
@@ -82,7 +81,7 @@ const formItems = computed(() => [
     type: "textarea",
     placeholder: "请输入",
     resize: "none",
-    required: true
+    required: true,
   },
   {
     label: "时间",
@@ -90,7 +89,7 @@ const formItems = computed(() => [
     type: "datetime",
     placeholder: "请输入时间",
     valueFormat: "YYYY-MM-DD HH:mm:ss",
-     required: true
+    required: true,
   },
   {
     label: "switch",
@@ -115,6 +114,18 @@ const formItems = computed(() => [
       { label: "box2", value: 2 },
     ],
   },
+    {
+    label: "城市",
+    key: "city",
+    type: "select",
+    placeholder: "please select",
+    options: (formData) => {
+      if (formData.select == "1") return [{ label: "海淀", value: "1" }];
+      if (formData.select == "2") return [{ label: "海淀", value: "1" },{ label: "浦东", value: "2" }];
+      return [];
+    },
+    // if: (formData) => !!formData.select,
+  },
   {
     label: "性别",
     key: "select",
@@ -138,19 +149,8 @@ const formItems = computed(() => [
       header: "headerSelect",
     },
   },
-   {
-    label: "城市",
-    key: "city",
-    type: "select",
-    placeholder: 'please select',
-    options: (formData) => {
-      if (formData.select == "1") return [{ label: "海淀", value: 1 }];
-      if (formData.select == "2") return [{ label: "浦东", value: 2 }];
-      return [];
-    },
-    if: (formData) => !!formData.select, 
-  },
-   {
+
+  {
     label: "街道",
     key: "jd",
     type: "input",
@@ -193,7 +193,7 @@ const formItems = computed(() => [
   //   key: "time",
   //   type: "time",
   //   placeholder: "请输入时间",
-  //   disabled: (formData) => formData.switch === true 
+  //   disabled: (formData) => formData.switch === true
   // },
   // {
   //   label: "timeRange",
@@ -221,7 +221,7 @@ const formItems = computed(() => [
   //   key: "slider",
   //   type: "slider",
   // },
-  
+
   // {
   //   label: "cascader",
   //   key: "cascader",
@@ -284,7 +284,7 @@ const { basicForm, validate } = useBasicForm({
 });
 
 const handelClick = async () => {
-  // await validate();
+  await validate();
   console.log("formData", formData.value);
 };
 </script>
