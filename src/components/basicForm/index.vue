@@ -360,17 +360,18 @@ const ComponentItem = {
 //   },
 //   { deep: true },
 // );
-watch(
-  items,
-  (newItems) => {
-    const visibleKeySet = new Set(newItems.map(i => i.key));
-    Object.keys(formData.value).forEach(key => {
-      if (!visibleKeySet.has(key)) {
-        delete formData.value[key];
-      }
-    });
-  }
-);
+// 监听自动删除 formData.value 中不再显示的字段对应的值（可选）
+// watch(
+//   items,
+//   (newItems) => {
+//     const visibleKeySet = new Set(newItems.map(i => i.key));
+//     Object.keys(formData.value).forEach(key => {
+//       if (!visibleKeySet.has(key)) {
+//         delete formData.value[key];
+//       }
+//     });
+//   }
+// );
 
 
 watch(

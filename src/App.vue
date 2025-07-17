@@ -18,12 +18,19 @@ import { useBasicForm } from "./hooks/useBasicForm";
 
 const formData = ref<any>({
   data: {
-    input: undefined,
+    input: '',
   },
-  select: undefined,
-  number: undefined,
-  switch: false,
-  radioGroup: 1,
+  password: '123',
+  number: '',
+  text: '',
+  time: '',
+   switch: false,
+ radioGroup: 1,
+ checkboxGroup: '',
+  select: '',
+  city: '',
+  jd: '',
+  treeSelect: '',
   keySlot: "",
 });
 
@@ -44,11 +51,9 @@ const formItems = computed(() => [
     defaultValue: "defaultValue",
     unit: "dm",
     trim: true,
-    hidden: formData.value.select == 2,
-    span: 24,
-    showMessage: true,
-    error: 'error',
-    rules: [{ required: true, message: "请输入姓名", trigger: "blur" }],
+    if:(formData) => !(formData.select == 2),
+    required:true,
+    // rules: [{ required: true, message: "请输入姓名", trigger: "blur" }],
   },
   { type: "divider" },
   { type: "blank" },
@@ -58,8 +63,8 @@ const formItems = computed(() => [
     key: "password",
     type: "password",
     placeholder: "请输入",
-    defaultValue: "123456",
-     hidden: formData.value.select == 2,
+    // defaultValue: "123456",
+    if:(formData) => formData.select != 2,
   },
   {
     label: "数字框",
@@ -69,6 +74,7 @@ const formItems = computed(() => [
     min: "0",
     placeholder: "请输入",
     controls: false,
+       rules: [{ required: true, message: "请输入姓名", trigger: "blur" }],
   },
   {
     label: "文本框",
@@ -76,13 +82,15 @@ const formItems = computed(() => [
     type: "textarea",
     placeholder: "请输入",
     resize: "none",
+    required: true
   },
   {
     label: "时间",
-    key: "date",
+    key: "time",
     type: "datetime",
     placeholder: "请输入时间",
     valueFormat: "YYYY-MM-DD HH:mm:ss",
+     required: true
   },
   {
     label: "switch",
@@ -106,38 +114,6 @@ const formItems = computed(() => [
       { label: "box1", value: 1 },
       { label: "box2", value: 2 },
     ],
-  },
-  {
-    label: "time",
-    key: "time",
-    type: "time",
-    placeholder: "请输入时间",
-    disabled: formData.value.switch === true,
-  },
-  {
-    label: "timeRange",
-    key: "timeRange",
-    type: "timeRange",
-    rangeSeparator: "To",
-    startPlaceholder: "Start time",
-    endPlaceholder: "End time",
-    // isRange: true
-  },
-  {
-    label: "rate",
-    key: "rate",
-    type: "rate",
-    disabled: true
-  },
-  {
-    label: "color",
-    key: "color",
-    type: "color",
-  },
-  {
-    label: "slider",
-    key: "slider",
-    type: "slider",
   },
   {
     label: "性别",
@@ -176,7 +152,7 @@ const formItems = computed(() => [
   },
    {
     label: "街道",
-    key: "street",
+    key: "jd",
     type: "input",
     disabled: (formData) => !formData.city, // 没有选择城市就禁用
   },
@@ -212,69 +188,103 @@ const formItems = computed(() => [
       },
     },
   },
-  {
-    label: "cascader",
-    key: "cascader",
-    type: "cascader",
-    // 如果传了props格式化字段，需要包一层props
-    props: {
-      placeholder: "please select",
-      options: [
-        {
-          id: "guide",
-          name: "Guide",
-          children: [
-            {
-              id: "disciplines",
-              name: "Disciplines",
-              children: [
-                {
-                  id: "consistency",
-                  name: "Consistency",
-                },
-                {
-                  id: "feedback",
-                  name: "Feedback",
-                },
-              ],
-            },
-          ],
-        },
-      ],
-      props: {
-        label: "name",
-        value: "id",
-      },
-    },
-  },
-  {
-    label: "transfer",
-    key: "transfer",
-    type: "transfer",
-    data: [
-      { key: 1, label: "Option 1", disabled: false },
-      { key: 2, label: "Option 2", disabled: false },
-      { key: 3, label: "Option 3", disabled: false },
-      { key: 4, label: "Option 4", disabled: true },
-      { key: 5, label: "Option 5", disabled: false },
-    ],
-  },
+  // {
+  //   label: "time",
+  //   key: "time",
+  //   type: "time",
+  //   placeholder: "请输入时间",
+  //   disabled: (formData) => formData.switch === true 
+  // },
+  // {
+  //   label: "timeRange",
+  //   key: "timeRange",
+  //   type: "timeRange",
+  //   rangeSeparator: "To",
+  //   startPlaceholder: "Start time",
+  //   endPlaceholder: "End time",
+  //   // isRange: true
+  // },
+  // {
+  //   label: "rate",
+  //   key: "rate",
+  //   type: "rate",
+  //   disabled: true
+  // },
+  // {
+  //   label: "color",
+  //   key: "color",
+  //   type: "color",
+  //   if: false
+  // },
+  // {
+  //   label: "slider",
+  //   key: "slider",
+  //   type: "slider",
+  // },
+  
+  // {
+  //   label: "cascader",
+  //   key: "cascader",
+  //   type: "cascader",
+  //   // 如果传了props格式化字段，需要包一层props
+  //   props: {
+  //     placeholder: "please select",
+  //     options: [
+  //       {
+  //         id: "guide",
+  //         name: "Guide",
+  //         children: [
+  //           {
+  //             id: "disciplines",
+  //             name: "Disciplines",
+  //             children: [
+  //               {
+  //                 id: "consistency",
+  //                 name: "Consistency",
+  //               },
+  //               {
+  //                 id: "feedback",
+  //                 name: "Feedback",
+  //               },
+  //             ],
+  //           },
+  //         ],
+  //       },
+  //     ],
+  //     props: {
+  //       label: "name",
+  //       value: "id",
+  //     },
+  //   },
+  // },
+  // {
+  //   label: "transfer",
+  //   key: "transfer",
+  //   type: "transfer",
+  //   data: [
+  //     { key: 1, label: "Option 1", disabled: false },
+  //     { key: 2, label: "Option 2", disabled: false },
+  //     { key: 3, label: "Option 3", disabled: false },
+  //     { key: 4, label: "Option 4", disabled: true },
+  //     { key: 5, label: "Option 5", disabled: false },
+  //   ],
+  // },
   {
     label: "keySlot",
     key: "keySlot",
   },
 ]);
 
-const rules = {};
+// const rules = {};
 
 const { basicForm, validate } = useBasicForm({
-  rules,
+  // rules,
   formItems,
   modelValue: formData,
 });
 
 const handelClick = async () => {
-  await validate();
+  // await validate();
   console.log("formData", formData.value);
 };
 </script>
