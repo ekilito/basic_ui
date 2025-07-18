@@ -1,12 +1,6 @@
 <template>
   <div class="app-page">
-    <basic-form>
-      <template #prefixInput> input slot </template>
-      <template #optionsLabelSlots> 男1 </template>
-      <template #keySlot>
-        <div>keySlot</div>
-      </template>
-    </basic-form>
+    <basic-form></basic-form>
     <el-button @click="handelClick">提交</el-button>
   </div>
 </template>
@@ -14,6 +8,8 @@
 <script setup lang="ts">
 import { ref, computed , h} from "vue";
 import { useBasicForm } from "./hooks/useBasicForm";
+import { OptionItem } from './components/basicForm/types/types';
+
 
 const formData = ref<any>({
   data: {
@@ -33,7 +29,7 @@ const formData = ref<any>({
   keySlot: "",
 });
 
-const formItems = computed(() => [
+const formItems = computed<OptionItem[]>(() => [
   { type: "title", label: "个人信息" },
   {
     label: "姓名",
@@ -42,7 +38,7 @@ const formItems = computed(() => [
     labelWidth: 110,
     placeholder: "请输入",
     slots: {
-      prefix: "prefixInput",
+      //prefix: "prefixInput",
     },
     onInput: () => {
       console.log("输入了");
@@ -108,6 +104,9 @@ const formItems = computed(() => [
     placeholder: "请输入时间",
     valueFormat: "YYYY-MM-DD HH:mm:ss",
     required: true,
+    style: {
+      width: '100%'
+    }
   },
   {
     label: "switch",
@@ -156,7 +155,7 @@ const formItems = computed(() => [
     required: true,
     span: 24,
     options: [
-      { name: "男", id: 1, slots: "optionsLabelSlots" },
+      { name: "男", id: 1},
       { name: "女", id: 2 },
     ],
     fieldNames: {
@@ -301,10 +300,10 @@ const formItems = computed(() => [
   },
 ]);
 
-// const rules = {};
+const rules = {};
 
 const { basicForm, validate } = useBasicForm({
-  // rules,
+  rules,
   formItems,
   modelValue: formData,
 });
