@@ -33,7 +33,7 @@ import {
   watch,
 } from "vue";
 import { get, omit, set } from "lodash-es";
-import { OptionItem } from "./index.d";
+import { OptionItem } from "./types/types";
 
 const props = defineProps(["formItems", "rules"]);
 
@@ -48,13 +48,6 @@ defineOptions({
 
 const slots = useSlots();
 
-function withSlots(componentFactory: (props: any) => any) {
-  return {
-    setup(_, { attrs, slots }) {
-      return () => componentFactory({ ...attrs, slots });
-    },
-  };
-}
 
 function transformOptions(component: Component, optionsComponent: Component) {
   return (props: {
@@ -66,26 +59,6 @@ function transformOptions(component: Component, optionsComponent: Component) {
     return h(
       component,
       props,
-      //() =>
-      //   options.map((item) => {
-      //     let _slots = item.slots;
-      //     if (typeof _slots === "string") {
-      //       _slots = slots[_slots];
-      //     }
-      //     return h(
-      //       optionsComponent,
-      //       // {
-      //       //   label: item.label,
-      //       //   value: item.value,
-      //       // },
-      //       {
-      //         label: item[fieldNames.label],
-      //         value: item[fieldNames.value],
-      //       },
-      //       _slots,
-      //     );
-      //   }),
-      // );
       {
         default: () =>
           options.map((item) => {
@@ -102,7 +75,6 @@ function transformOptions(component: Component, optionsComponent: Component) {
               _slots,
             );
           }),
-        // ...props.slots,
         ...(props.slots ?? {}), // 显式合并具名插槽
       },
     );
@@ -454,7 +426,7 @@ function getFormItemProps(item: Record<string, any>) {
 </script>
 
 <template>
-  <el-form ref="formRef" :model="formData" :rules="innerRules" label-width="100px" label-suffix="：">
+  <el-form ref="formRef" :model="formData" :rules="innerRules" label-width="120px" label-suffix=":" :validate-on-rule-change="false">
     <el-row :gutter="10">
       <el-col v-for="(item, index) in items" :key="item.key || item.type + index" :span="item.span || 24">
         <template v-if="item.type === 'divider'">

@@ -1,137 +1,327 @@
 <template>
-  <m-form
-    :options="options"
-    label-width="120px"
-    @on-success="onSuccess"
-  >
-    <template #uploadArea>
-      <el-button size="small" type="primary"> click to upload</el-button>
-    </template>
-    <template #uploadTip>
-      <div class="el-upload__tip">jpg files with a size less than 500kb</div>
-    </template>
-    <template #action="scoped">
-         <el-button type="primary" @click="onSubmit(scoped)">Create</el-button>
-         <el-button>Cancel</el-button>
-    </template>
-  </m-form>
+  <div class="app-page">
+    <basic-form>
+      <template #prefixInput> input slot </template>
+      <template #headerSelect> select slot </template>
+      <template #optionsLabelSlots> 男 </template>
+      <template #keySlot>
+        <div>keySlot</div>
+      </template>
+    </basic-form>
+    <el-button @click="handelClick">提交</el-button>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { FormInstance } from 'element-plus';
-import { FormOptions } from "./components/form/src/types/types";
+import { ref, computed } from "vue";
+import { useBasicForm } from "./hooks/useBasicForm";
 
-interface Scoped {
-    form: FormInstance,
-    model: any
-}
-
-let options: FormOptions[] = [
-  {
-    type: "input",
-    value: "",
-    label: "用户名",
-    prop: "username",
-    placeholder: "please input",
-    rules: [{ required: true, message: "please input", trigger: "blur" }],
+const formData = ref<any>({
+  data: {
+    input: "",
   },
+  password: "123",
+  number: undefined,
+  text: "",
+  time: "",
+  switch: false,
+  radioGroup: 1,
+  checkboxGroup: undefined,
+  select: "",
+  city: "",
+  jd: "",
+  treeSelect: "",
+  keySlot: "",
+});
+
+const formItems = computed(() => [
+  { type: "title", label: "个人信息" },
   {
+    label: "姓名",
+    key: "data.input",
     type: "input",
-    value: "",
-    label: "密码",
-    prop: "password",
-    placeholder: "please input",
-    rules: [{ required: true, message: "please input", trigger: "blur" }],
-    attrs: {
-      showPassword: true,
+    labelWidth: 110,
+    placeholder: "请输入",
+    slots: {
+      prefix: "prefixInput",
     },
+    onInput: () => {
+      console.log("输入了");
+    },
+    defaultValue: "defaultValue",
+    unit: "dm",
+    trim: true,
+    if: (formData) => !(formData.ces == 3),
+    rules: [{ required: true, message: "请输入姓名", trigger: "blur" }],
+    disabled: (formData) => formData.ces == 1
   },
   {
+    label: "ces",
+    key: "ces",
     type: "select",
-    value: "",
-    label: "性别",
+    placeholder: "请选择",
+    required: true,
+    span: 24,
+    options: [
+      { label: "ces1", value: 1 },
+      { label: "ces2", value: 2 },
+      { label: "ces3", value: 3 },
+    ],
+    onChange: (e) => {
+      if(e == 1) {
+        formData.value.data.input = 'input'
+      }
+    }
+  },
+  { type: "divider" },
+  { type: "blank" },
+
+  {
+    label: "密码",
+    key: "password",
+    type: "password",
+    placeholder: "请输入",
+    if: (formData) => formData.select != 2,
+  },
+  {
+    label: "数字框",
+    key: "number",
+    type: "number",
+    max: 100,
+    min: 0,
+    placeholder: "请输入",
+    controls: false,
+    defaultValue: 66,
+    rules: [{ required: true, message: "请输入姓名", trigger: "blur" }],
+  },
+  {
+    label: "文本框",
+    key: "text",
+    type: "textarea",
+    placeholder: "请输入",
+    resize: "none",
+    required: true,
+  },
+  {
+    label: "时间",
+    key: "time",
+    type: "datetime",
+    placeholder: "请输入时间",
+    valueFormat: "YYYY-MM-DD HH:mm:ss",
+    required: true,
+  },
+  {
+    label: "switch",
+    key: "switch",
+    type: "switch",
+  },
+  {
+    label: "radioGroup",
+    key: "radioGroup",
+    type: "radioGroup",
+    options: [
+      { label: "radio1", value: 1 },
+      { label: "radio2", value: 2 },
+    ],
+  },
+  {
+    label: "checkboxGroup",
+    key: "checkboxGroup",
+    type: "checkboxGroup",
+    options: [
+      { label: "box1", value: 1 },
+      { label: "box2", value: 2 },
+    ],
+  },
+  {
+    label: "城市",
+    key: "city",
+    type: "select",
     placeholder: "please select",
-    prop: "role",
-    rules: [{ required: true, message: "please select must!", trigger: "blur" }],
-    children: [
-      {
-        type: "option",
-        label: "男",
-        value: "1",
-      },
-      {
-        type: "option",
-        label: "女",
-        value: "2",
-      },
+    options: (formData) => {
+      if (formData.select == "1") return [{ label: "海淀", value: "1" }];
+      if (formData.select == "2")
+        return [
+          { label: "海淀", value: "1" },
+          { label: "浦东", value: "2" },
+        ];
+      return [];
+    },
+    // if: (formData) => !!formData.select,
+  },
+  {
+    label: "性别",
+    key: "select",
+    type: "select",
+    placeholder: "请选择",
+    required: true,
+    span: 24,
+    options: [
+      { name: "男", id: 1, slots: "optionsLabelSlots" },
+      { name: "女", id: 2 },
     ],
-    attrs: {
-      style: {
-        width: "90%",
-      },
+    fieldNames: {
+      label: "name",
+      value: "id",
+    },
+    onChange: (value) => {
+      // 联动
+      console.log(value, formData.value);
+    },
+    slots: {
+      header: "headerSelect",
+      //header : () => h('div', '我是 select 的 header slot'), // 推荐函数式插槽
     },
   },
-  {
-    type: "checkbox-group",
-    value: [],
-    prop: "like",
-    label: "多选",
-    children: [
-      {
-        type: "checkbox",
-        label: "足球",
-        value: "1",
-      },
-      {
-        type: "checkbox",
-        label: "篮球",
-        value: "2",
-      },
-    ],
-    rules: [{ required: true, message: "please select must!", trigger: "blur" }],
-  },
-  {
-    type: "radio-group",
-    value: "",
-    prop: "单选",
-    label: "单选",
-    children: [
-      {
-        type: "radio",
-        label: "足球",
-        value: "1",
-      },
-      {
-        type: "radio",
-        label: "篮球",
-        value: "2",
-      },
-    ],
-    rules: [{ required: true, message: "please select must!", trigger: "blur" }],
-  },
-  {
-    type: "upload",
-    label: "上传",
-    prop: "file",
-    uploadAttrs: {
-      action: "https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15",
-    },
-  },
-];
 
-const onSuccess = ({response, uploadFile, uploadFiles}) => {
-  console.log(response, uploadFile,uploadFiles);
+  {
+    label: "街道",
+    key: "jd",
+    type: "input",
+    disabled: (formData) => !formData.city, // 没有选择城市就禁用
+  },
+  {
+    label: "treeSelect",
+    key: "treeSelect",
+    type: "treeSelect",
+    // treeSelect 多包一层props（如果传了props格式化data字段， 需要包一层props）
+    props: {
+      placeholder: "请选择",
+      data: [
+        {
+          id: "1",
+          name: "one",
+          children: [
+            {
+              id: "1-1",
+              name: "two",
+              children: [
+                {
+                  id: "1-1-1",
+                  name: "three",
+                },
+              ],
+            },
+          ],
+        },
+      ],
+      onNodeClick: (e) => {
+        console.log(e);
+      },
+      props: {
+        label: "name",
+        value: "id",
+        children: "children",
+      },
+    },
+  },
+  // {
+  //   label: "time",
+  //   key: "time",
+  //   type: "time",
+  //   placeholder: "请输入时间",
+  //   disabled: (formData) => formData.switch === true
+  // },
+  // {
+  //   label: "timeRange",
+  //   key: "timeRange",
+  //   type: "timeRange",
+  //   rangeSeparator: "To",
+  //   startPlaceholder: "Start time",
+  //   endPlaceholder: "End time",
+  //   // isRange: true
+  // },
+  // {
+  //   label: "rate",
+  //   key: "rate",
+  //   type: "rate",
+  //   disabled: true
+  // },
+  // {
+  //   label: "color",
+  //   key: "color",
+  //   type: "color",
+  //   if: false
+  // },
+  // {
+  //   label: "slider",
+  //   key: "slider",
+  //   type: "slider",
+  // },
+
+  // {
+  //   label: "cascader",
+  //   key: "cascader",
+  //   type: "cascader",
+  //   // 如果传了props格式化字段，需要包一层props
+  //   props: {
+  //     placeholder: "please select",
+  //     options: [
+  //       {
+  //         id: "guide",
+  //         name: "Guide",
+  //         children: [
+  //           {
+  //             id: "disciplines",
+  //             name: "Disciplines",
+  //             children: [
+  //               {
+  //                 id: "consistency",
+  //                 name: "Consistency",
+  //               },
+  //               {
+  //                 id: "feedback",
+  //                 name: "Feedback",
+  //               },
+  //             ],
+  //           },
+  //         ],
+  //       },
+  //     ],
+  //     props: {
+  //       label: "name",
+  //       value: "id",
+  //     },
+  //   },
+  // },
+  // {
+  //   label: "transfer",
+  //   key: "transfer",
+  //   type: "transfer",
+  //   data: [
+  //     { key: 1, label: "Option 1", disabled: false },
+  //     { key: 2, label: "Option 2", disabled: false },
+  //     { key: 3, label: "Option 3", disabled: false },
+  //     { key: 4, label: "Option 4", disabled: true },
+  //     { key: 5, label: "Option 5", disabled: false },
+  //   ],
+  // },
+  {
+    label: "keySlot",
+    key: "keySlot",
+  },
+]);
+
+// const rules = {};
+
+const { basicForm, validate } = useBasicForm({
+  // rules,
+  formItems,
+  modelValue: formData,
+});
+
+const handelClick = async () => {
+  await validate();
+  console.log("formData", formData.value);
 };
-
-const onSubmit = (scoped: Scoped) => {
-    scoped.form.validate((valid) => {
-        if(valid) {
-            console.log(scoped.model)
-        }
-    })
-}
-
 </script>
 
-<style lang="scss" scoped></style>
+<style scoped lang="scss">
+.app-page {
+  width: 800px;
+}
+:deep(.el-input-number .el-input__inner) {
+  text-align: left;
+}
+</style>
 
