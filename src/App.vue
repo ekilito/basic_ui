@@ -2,8 +2,7 @@
   <div class="app-page">
     <basic-form>
       <template #prefixInput> input slot </template>
-      <template #headerSelect> select slot </template>
-      <template #optionsLabelSlots> 男 </template>
+      <template #optionsLabelSlots> 男1 </template>
       <template #keySlot>
         <div>keySlot</div>
       </template>
@@ -13,7 +12,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed , h} from "vue";
 import { useBasicForm } from "./hooks/useBasicForm";
 
 const formData = ref<any>({
@@ -169,8 +168,8 @@ const formItems = computed(() => [
       console.log(value, formData.value);
     },
     slots: {
-      header: "headerSelect",
-      //header : () => h('div', '我是 select 的 header slot'), // 推荐函数式插槽
+     // header: "headerSelect",
+      header : () => h('div', '我是 select 的 header slot'), // 推荐函数式插槽
     },
   },
 

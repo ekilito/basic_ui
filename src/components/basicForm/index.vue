@@ -93,7 +93,6 @@ const componentMap: Record<string, any> = {
   checkboxGroup: transformOptions(ElCheckboxGroup, ElCheckbox),
 
   treeSelect: ElTreeSelect,
-
   date: ElDatePicker,
   datetime: ElDatePicker,
   daterange: ElDatePicker,
@@ -197,17 +196,9 @@ const resolveItem = (item: any, formData: any) => {
   typeof clone.disabled === "function" && (clone.disabled = clone.disabled(formData));
 
   if (typeof clone.options === "function") {
-    //const oldOptions = lastOptionsCache.get(clone.key) || [];
     const newOptions = clone.options(formData);
     clone.options = newOptions;
 
-    // 不自动清空值
-    // const changed = JSON.stringify(oldOptions) !== JSON.stringify(newOptions);
-    // const needReset = changed && get(formData, clone.key) != null;
-
-    // if (needReset) {
-    //   set(formData, clone.key, undefined);
-    // }
     // 新选项里不包含旧值时，才清空
     const oldValue = get(formData, clone.key);
     const optionValues = newOptions.map((opt) => opt.value ?? opt.id ?? opt.key);
@@ -265,17 +256,6 @@ const ComponentItem = {
 
           formData: formData.value, // 透传自定义组件
         },
-        // Object.assign(
-        //   item.slots || {},
-        //   Object.entries(item.slots || {}).reduce((acc, [key, value]) => {
-        //     if (typeof value === "string") {
-        //       if (slots[value]) {
-        //         acc[key] = slots[value];
-        //       }
-        //     }
-        //     return acc;
-        //   }, {} as Record<string, any>),
-        // ),
         Object.entries(item.slots || {}).reduce((acc, [slotName, slotValue]) => {
           if (typeof slotValue === "string" && slots[slotValue]) {
             acc[slotName] = slots[slotValue];
