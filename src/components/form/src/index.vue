@@ -1,7 +1,5 @@
 <template>
-    <div class="page">
-        <m-form></m-form>
-    </div>
+  <div>123123123123233123123311</div>
 </template>
 
 <script setup lang="ts">
