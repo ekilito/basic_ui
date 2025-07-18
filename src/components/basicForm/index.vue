@@ -48,7 +48,15 @@ defineOptions({
 
 const slots = useSlots();
 
-
+/**
+ *
+ * @param component
+ * @param optionsComponent
+ * 作用：处理如 select, radioGroup, checkboxGroup 这类有多个选项的控件。
+ * 实现：根据传入的 options，用 h 函数渲染外层容器组件（如 ElSelect）和每个选项组件（如 ElOption）。
+ * 支持 options 里每项定义 slots，灵活渲染选项插槽。
+ * 支持合并传入的具名插槽。
+ */
 function transformOptions(component: Component, optionsComponent: Component) {
   return (props: {
     options: OptionItem[];
@@ -56,28 +64,24 @@ function transformOptions(component: Component, optionsComponent: Component) {
     slots?: Record<string, any>;
   }) => {
     const { options = [], fieldNames = { label: "label", value: "value" } } = props;
-    return h(
-      component,
-      props,
-      {
-        default: () =>
-          options.map((item) => {
-            let _slots = item.slots;
-            if (typeof _slots === "string") {
-              _slots = slots[_slots];
-            }
-            return h(
-              optionsComponent,
-              {
-                label: item[fieldNames.label],
-                value: item[fieldNames.value],
-              },
-              _slots,
-            );
-          }),
-        ...(props.slots ?? {}), // 显式合并具名插槽
-      },
-    );
+    return h(component, props, {
+      default: () =>
+        options.map((item) => {
+          let _slots = item.slots;
+          if (typeof _slots === "string") {
+            _slots = slots[_slots];
+          }
+          return h(
+            optionsComponent,
+            {
+              label: item[fieldNames.label],
+              value: item[fieldNames.value],
+            },
+            _slots,
+          );
+        }),
+      ...(props.slots ?? {}), // 显式合并具名插槽
+    });
   };
 }
 
@@ -122,18 +126,12 @@ const componentMap: Record<string, any> = {
   }),
 };
 
-const dateTypeMap: Record<string, string> = {
-  data: "date",
-  datetime: "datetime",
-  daterange: "daterange",
-  datetimerange: "datetimerange",
-  month: "month",
-  year: "year",
-};
 
-const rootProps = ["label", "key", "type", "span"];
+
+const rootProps = ["label", "key", "type", "span", "hidden", "if", "unit", "defaultValue", "trim", "fieldNames"];
 
 function getProps(item: Record<string, any>) {
+  // 如果表单项里存在 props 字段，说明用户手动定义了控件的全部 props，直接返回这个 props，不再继续自动处理。
   if (item.props) return item.props;
   // rootsProps 不是组件的props，不传给组件
   // return omit(item, rootProps);
@@ -144,6 +142,15 @@ function getProps(item: Record<string, any>) {
     ...item.props, // 用户手动设置的优先生效
     ...omit(item, rootProps), // 去掉非组件属性
   };
+
+  const dateTypeMap: Record<string, string> = {
+  data: "date",
+  datetime: "datetime",
+  daterange: "daterange",
+  datetimerange: "datetimerange",
+  month: "month",
+  year: "year",
+};
 
   // 补充 date 类型的 type
   if (item.type && dateTypeMap[item.type]) {
@@ -177,6 +184,7 @@ function getProps(item: Record<string, any>) {
   return props;
 }
 
+// 利用 Vue 的依赖注入机制，让子组件能通过 inject 拿到整个表单的数据，方便二次开发和扩展。
 provide("formData", formData);
 
 // 设置默认值 （只会初始化时执行一次）
@@ -186,19 +194,15 @@ props.formItems.forEach((item) => {
   }
 });
 
-
+// 缓存 & 计算处理表单项 resolveItem 支持函数写法动态计算。
 const lastOptionsCache = new Map<string, any[]>();
-
 const resolveItem = (item: any, formData: any) => {
   const clone = { ...item };
-
   typeof clone.if === "function" && (clone.hidden = !clone.if(formData));
   typeof clone.disabled === "function" && (clone.disabled = clone.disabled(formData));
-
   if (typeof clone.options === "function") {
     const newOptions = clone.options(formData);
     clone.options = newOptions;
-
     // 新选项里不包含旧值时，才清空
     const oldValue = get(formData, clone.key);
     const optionValues = newOptions.map((opt) => opt.value ?? opt.id ?? opt.key);
@@ -206,10 +210,8 @@ const resolveItem = (item: any, formData: any) => {
     if (oldValue != null && !optionValues.includes(oldValue)) {
       set(formData, clone.key, null); // 更安全
     }
-
     lastOptionsCache.set(clone.key, newOptions);
   }
-
   return clone;
 };
 
@@ -233,16 +235,21 @@ const ComponentItem = {
   props: ["item"],
   setup(props: { item: Record<string, any> }) {
     return () => {
+      // 表单项的配置对象
       const { item } = props;
       /**
        * MutableHandler
        *
        */
       return h(
-        // 表单 type 组件
+        // 获取表单 type 组件
         getComponent(item),
         {
           // v-model
+          /**
+           * 使用 modelValue 和 onUpdate:modelValue 绑定表单数据，实现类似 v-model 效果。
+           * 通过 lodash 的 get 和 set，支持深层路径访问（例如 item.key 是 data.input）。
+           */
           modelValue: get(formData.value, item.key),
           "onUpdate:modelValue": (value: any) => {
             if (item.trim) {
@@ -251,11 +258,14 @@ const ComponentItem = {
             // formData.value[item.key] = value;
             set(formData.value, item.key, value);
           },
+          // 组件 props
           ...getProps(item),
           // ...reactive(getProps(item))
 
           formData: formData.value, // 透传自定义组件
         },
+        // 渲染具名插槽 item.slots 里配置的插槽名和对应的字符串（字符串指向当前组件的 slots 中定义的插槽函数）
+        // <template #prefixInput>...</template>，item.slots = { prefix: "prefixInput" }
         Object.entries(item.slots || {}).reduce((acc, [slotName, slotValue]) => {
           if (typeof slotValue === "string" && slots[slotValue]) {
             acc[slotName] = slots[slotValue];
@@ -302,7 +312,9 @@ watch(
   { deep: true },
 );
 
-// 暴露的api方法
+/**
+ * 暴露的api方法
+ */
 defineExpose({
   validate(...args) {
     return formInstance.value?.validate(...args);
@@ -329,7 +341,6 @@ defineExpose({
     return Promise.resolve();
   },
 
- 
   validateFields(nameList?: (string | number)[]): Promise<any> {
     return new Promise((resolve, reject) => {
       if (!formInstance.value) return reject("表单实例不存在");
@@ -355,7 +366,6 @@ defineExpose({
     });
   },
 
-
   clearValidate(name?: string | string[]): Promise<void> {
     if (!formInstance.value) return Promise.reject("表单实例不存在");
     formInstance.value.clearValidate(name);
@@ -363,6 +373,10 @@ defineExpose({
   },
 });
 
+/**
+ * 合并全局 rules 和各表单项的 rules。
+ * 自动根据 required 生成简单必填校验。
+ */
 const innerRules = computed(() => {
   const mergedRules = { ...props.rules };
 
@@ -388,6 +402,7 @@ const innerRules = computed(() => {
   return mergedRules;
 });
 
+// 过滤出 el-form-item 相关属性
 function getFormItemProps(item: Record<string, any>) {
   const allowedProps = [
     "labelWidth",
@@ -406,7 +421,14 @@ function getFormItemProps(item: Record<string, any>) {
 </script>
 
 <template>
-  <el-form ref="formRef" :model="formData" :rules="innerRules" label-width="120px" label-suffix=":" :validate-on-rule-change="false">
+  <el-form
+    ref="formRef"
+    :model="formData"
+    :rules="innerRules"
+    label-width="120px"
+    label-suffix=":"
+    :validate-on-rule-change="false"
+  >
     <el-row :gutter="10">
       <el-col v-for="(item, index) in items" :key="item.key || item.type + index" :span="item.span || 24">
         <template v-if="item.type === 'divider'">
