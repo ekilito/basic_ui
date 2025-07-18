@@ -494,7 +494,7 @@ function getFormItemProps(item: Record<string, any>) {
 }
 
 .form-blank {
-  height: 24px; /* 空白高度，自己调 */
+  height: 24px;
+  /* 空白高度，自己调 */
 }
 </style>
-
