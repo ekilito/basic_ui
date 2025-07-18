@@ -10,11 +10,21 @@
     <template #uploadTip>
       <div class="el-upload__tip">jpg files with a size less than 500kb</div>
     </template>
+    <template #action="scoped">
+         <el-button type="primary" @click="onSubmit(scoped)">Create</el-button>
+         <el-button>Cancel</el-button>
+    </template>
   </m-form>
 </template>
 
 <script setup lang="ts">
+import { FormInstance } from 'element-plus';
 import { FormOptions } from "./components/form/src/types/types";
+
+interface Scoped {
+    form: FormInstance,
+    model: any
+}
 
 let options: FormOptions[] = [
   {
@@ -113,6 +123,13 @@ const onSuccess = ({response, uploadFile, uploadFiles}) => {
   console.log(response, uploadFile,uploadFiles);
 };
 
+const onSubmit = (scoped: Scoped) => {
+    scoped.form.validate((valid) => {
+        if(valid) {
+            console.log(scoped.model)
+        }
+    })
+}
 
 </script>
 

@@ -1,5 +1,5 @@
 <template>
-  <el-form v-if="model" :model="model" :rules="rules" v-bind="$attrs" :validate-on-rule-change="false">
+  <el-form ref="formRef" v-if="model" :model="model" :rules="rules" v-bind="$attrs" :validate-on-rule-change="false">
     <template v-for="(item, index) in options" :key="index">
       <el-form-item v-if="!item.children || !item.children!.length" :label="item.label" :prop="item.prop">
         <component
@@ -44,6 +44,9 @@
         </component>
       </el-form-item>
     </template>
+    <el-form-item>
+      <slot name="action" :form="formRef" :model="model"></slot>
+    </el-form-item>
   </el-form>
 </template>
 
@@ -51,7 +54,7 @@
 import { PropType, ref, onMounted, watch } from "vue";
 import { FormOptions } from "./types/types";
 import cloneDeep from "lodash-es/cloneDeep";
-import { UploadFile, UploadFiles, UploadProgressEvent, UploadUserFile } from 'element-plus';
+import { FormInstance, UploadFile, UploadFiles, UploadProgressEvent, UploadUserFile } from 'element-plus';
 
 const emits = defineEmits([
   "on-preview",
@@ -62,8 +65,7 @@ const emits = defineEmits([
   "on-change",
   "on-exceed",
   "before-upload",
-  "before-remove",
-  "http-request",
+  "before-remove"
 ]);
 
 let props = defineProps({
@@ -72,10 +74,15 @@ let props = defineProps({
     type: Array as PropType<FormOptions[]>,
     required: true,
   },
+  // 用户自定义上传
+  httpRequest: {
+    type: Function
+  }
 });
 
 let model = ref<any>(null);
 let rules = ref<any>(null);
+let formRef = ref<FormInstance | null>()
 
 // 初始化表单
 const initForm = () => {
@@ -112,6 +119,8 @@ const onRemove = (uploadFile: UploadFile, uploadFiles: UploadFiles) => {
   emits("on-remove", { uploadFile, uploadFiles });
 };
 const onSuccess = (response: any, uploadFile: UploadFile, uploadFiles: UploadFiles) => {
+  let uploadItem = props.options.find(item => item.type == 'upload')!
+  model.value[uploadItem.prop!]  = {response, uploadFile, uploadFiles}
   emits("on-success", { response, uploadFile, uploadFiles });
 };
 const onError = (error: Error, uploadFile: UploadFile, uploadFiles: UploadFiles) => {
@@ -132,9 +141,7 @@ const beforeUpload = (uploadFile: UploadFile) => {
 const beforeRemove = (uploadFile: UploadFile, uploadFiles: UploadFiles) => {
   emits("before-remove", { uploadFile, uploadFiles });
 };
-const httpRequest = () => {
-  emits("http-request");
-};
+
 </script>
 
 <style lang="scss" scoped></style>
