@@ -51,8 +51,27 @@ const formItems = computed(() => [
     defaultValue: "defaultValue",
     unit: "dm",
     trim: true,
-    if: (formData) => !(formData.select == 2),
+    if: (formData) => !(formData.ces == 3),
     rules: [{ required: true, message: "请输入姓名", trigger: "blur" }],
+    disabled: (formData) => formData.ces == 1
+  },
+  {
+    label: "ces",
+    key: "ces",
+    type: "select",
+    placeholder: "请选择",
+    required: true,
+    span: 24,
+    options: [
+      { label: "ces1", value: 1 },
+      { label: "ces2", value: 2 },
+      { label: "ces3", value: 3 },
+    ],
+    onChange: (e) => {
+      if(e == 1) {
+        formData.value.data.input = 'input'
+      }
+    }
   },
   { type: "divider" },
   { type: "blank" },
@@ -114,14 +133,18 @@ const formItems = computed(() => [
       { label: "box2", value: 2 },
     ],
   },
-    {
+  {
     label: "城市",
     key: "city",
     type: "select",
     placeholder: "please select",
     options: (formData) => {
       if (formData.select == "1") return [{ label: "海淀", value: "1" }];
-      if (formData.select == "2") return [{ label: "海淀", value: "1" },{ label: "浦东", value: "2" }];
+      if (formData.select == "2")
+        return [
+          { label: "海淀", value: "1" },
+          { label: "浦东", value: "2" },
+        ];
       return [];
     },
     // if: (formData) => !!formData.select,
@@ -166,21 +189,24 @@ const formItems = computed(() => [
       data: [
         {
           id: "1",
-          name: "Level one 1",
+          name: "one",
           children: [
             {
               id: "1-1",
-              name: "Level two 1-1",
+              name: "two",
               children: [
                 {
                   id: "1-1-1",
-                  name: "Level three 1-1-1",
+                  name: "three",
                 },
               ],
             },
           ],
         },
       ],
+      onNodeClick: (e) => {
+        console.log(e);
+      },
       props: {
         label: "name",
         value: "id",
