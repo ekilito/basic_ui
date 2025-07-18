@@ -3,11 +3,29 @@
     <template v-for="(item, index) in options" :key="index">
       <el-form-item v-if="!item.children || !item.children!.length" :label="item.label" :prop="item.prop">
         <component
+          v-if="item.type !== 'upload'"
           :placeholder="item.placeholder"
           v-bind="item.attrs"
           :is="`el-${item.type}`"
           v-model="model[item.prop!]"
         ></component>
+        <el-upload
+          v-else
+          v-bind="item.uploadAttrs"
+          :on-preview="onPreview"
+          :on-remove="onRemove"
+          :on-success="onSuccess"
+          :on-error="onError"
+          :on-progress="onProgress"
+          :on-change="onChange"
+          :on-exceed="onExceed"
+          :before-upload="beforeUpload"
+          :before-remove="beforeRemove"
+          :http-request="httpRequest"
+        >
+          <slot name="uploadArea"></slot>
+          <slot name="uploadTip"></slot>
+        </el-upload>
       </el-form-item>
       <el-form-item v-if="item.children && item.children.length" :label="item.label" :prop="item.prop">
         <component
@@ -33,6 +51,20 @@
 import { PropType, ref, onMounted, watch } from "vue";
 import { FormOptions } from "./types/types";
 import cloneDeep from "lodash-es/cloneDeep";
+import { UploadFile, UploadFiles, UploadProgressEvent, UploadUserFile } from 'element-plus';
+
+const emits = defineEmits([
+  "on-preview",
+  "on-remove",
+  "on-success",
+  "on-error",
+  "on-progress",
+  "on-change",
+  "on-exceed",
+  "before-upload",
+  "before-remove",
+  "http-request",
+]);
 
 let props = defineProps({
   // 表单的配置项
@@ -71,6 +103,38 @@ watch(
   },
   { deep: true },
 );
+
+// 上传组件的方法
+const onPreview = (uploadFile: UploadFile) => {
+  emits("on-preview", uploadFile);
+};
+const onRemove = (uploadFile: UploadFile, uploadFiles: UploadFiles) => {
+  emits("on-remove", { uploadFile, uploadFiles });
+};
+const onSuccess = (response: any, uploadFile: UploadFile, uploadFiles: UploadFiles) => {
+  emits("on-success", { response, uploadFile, uploadFiles });
+};
+const onError = (error: Error, uploadFile: UploadFile, uploadFiles: UploadFiles) => {
+  emits("on-error", { error, uploadFile, uploadFiles });
+};
+const onProgress = (evt: UploadProgressEvent, uploadFile: UploadFile, uploadFiles: UploadFiles) => {
+  emits("on-progress", { evt, uploadFile, uploadFiles });
+};
+const onChange = (uploadFile: UploadFile, uploadFiles: UploadFiles) => {
+  emits("on-change", { uploadFile, uploadFiles });
+};
+const onExceed = (files: File[], uploadFiles: UploadUserFile[]) => {
+  emits("on-exceed", { files, uploadFiles });
+};
+const beforeUpload = (uploadFile: UploadFile) => {
+  emits("before-upload", uploadFile);
+};
+const beforeRemove = (uploadFile: UploadFile, uploadFiles: UploadFiles) => {
+  emits("before-remove", { uploadFile, uploadFiles });
+};
+const httpRequest = () => {
+  emits("http-request");
+};
 </script>
 
 <style lang="scss" scoped></style>
