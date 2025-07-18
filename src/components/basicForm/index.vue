@@ -126,9 +126,7 @@ const componentMap: Record<string, any> = {
   }),
 };
 
-
-
-const rootProps = ["label", "key", "type", "span", "hidden", "if", "unit", "defaultValue", "trim", "fieldNames"];
+const rootProps = ["label", "key", "type", "span", "hidden", "if", "unit", "defaultValue", "trim"];
 
 function getProps(item: Record<string, any>) {
   // 如果表单项里存在 props 字段，说明用户手动定义了控件的全部 props，直接返回这个 props，不再继续自动处理。
@@ -144,13 +142,13 @@ function getProps(item: Record<string, any>) {
   };
 
   const dateTypeMap: Record<string, string> = {
-  data: "date",
-  datetime: "datetime",
-  daterange: "daterange",
-  datetimerange: "datetimerange",
-  month: "month",
-  year: "year",
-};
+    data: "date",
+    datetime: "datetime",
+    daterange: "daterange",
+    datetimerange: "datetimerange",
+    month: "month",
+    year: "year",
+  };
 
   // 补充 date 类型的 type
   if (item.type && dateTypeMap[item.type]) {
@@ -455,6 +453,9 @@ function getFormItemProps(item: Record<string, any>) {
           </el-form-item>
         </template>
       </el-col>
+      <el-form-item>
+        <slot name="action"></slot>
+      </el-form-item>
     </el-row>
   </el-form>
 </template>

@@ -1,7 +1,16 @@
 <template>
   <div class="app-page">
-    <basic-form></basic-form>
-    <el-button @click="handelClick">提交</el-button>
+    <basic-form>
+      <template #appendSlots>
+        附件
+      </template>
+      <template #keySlot>
+        插槽组件
+      </template>
+      <template #action>
+         <el-button @click="handelClick" type="primary">提交</el-button>
+      </template>
+    </basic-form>
   </div>
 </template>
 
@@ -30,7 +39,6 @@ const formData = ref<any>({
 });
 
 const formItems = computed<OptionItem[]>(() => [
-  { type: "title", label: "个人信息" },
   {
     label: "姓名",
     key: "data.input",
@@ -38,7 +46,7 @@ const formItems = computed<OptionItem[]>(() => [
     labelWidth: 110,
     placeholder: "请输入",
     slots: {
-      //prefix: "prefixInput",
+      append: "appendSlots",
     },
     onInput: () => {
       console.log("输入了");
@@ -68,8 +76,6 @@ const formItems = computed<OptionItem[]>(() => [
       }
     }
   },
-  { type: "divider" },
-  { type: "blank" },
 
   {
     label: "密码",
