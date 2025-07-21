@@ -64,6 +64,22 @@ function transformOptions(component: Component, optionsComponent: Component) {
     slots?: Record<string, any>;
   }) => {
     const { options = [], fieldNames = { label: "label", value: "value" } } = props;
+
+    // 处理插槽
+    const processedSlots: Record<string, any> = {};
+
+    if (props.slots) {
+      Object.entries(props.slots).forEach(([slotName, slotValue]) => {
+        if (typeof slotValue === "string") {
+          // 如果是字符串，从父组件插槽中查找
+          processedSlots[slotName] = slots[slotValue];
+        } else if (typeof slotValue === "function") {
+          // 如果是函数，直接使用
+          processedSlots[slotName] = slotValue;
+        }
+      });
+    }
+
     return h(component, props, {
       default: () =>
         options.map((item) => {
@@ -80,7 +96,7 @@ function transformOptions(component: Component, optionsComponent: Component) {
             _slots,
           );
         }),
-      ...(props.slots ?? {}), // 显式合并具名插槽
+      ...processedSlots,
     });
   };
 }
@@ -169,16 +185,6 @@ function getProps(item: Record<string, any>) {
     props.showPassword = true;
   }
 
-  // // ✅ 支持函数式 disabled
-  // if (typeof props.disabled === "function") {
-  //   props.disabled = props.disabled(formData.value);
-  // }
-
-  // // ✅ 支持函数式 options
-  // if (typeof props.options === "function") {
-  //   props.options = props.options(formData.value);
-  // }
-
   return props;
 }
 
@@ -235,10 +241,19 @@ const ComponentItem = {
     return () => {
       // 表单项的配置对象
       const { item } = props;
-      /**
-       * MutableHandler
-       *
-       */
+
+      // 处理插槽
+      const componentSlots = Object.entries(item.slots || {}).reduce((acc, [slotName, slotValue]) => {
+        if (typeof slotValue === "string" && slots[slotValue]) {
+          // 字符串插槽名称 -> 查找对应的插槽内容
+          acc[slotName] = slots[slotValue];
+        } else if (typeof slotValue === "function") {
+          // 直接使用渲染函数
+          acc[slotName] = slotValue;
+        }
+        return acc;
+      }, {} as Record<string, any>);
+
       return h(
         // 获取表单 type 组件
         getComponent(item),
@@ -262,16 +277,7 @@ const ComponentItem = {
 
           formData: formData.value, // 透传自定义组件
         },
-        // 渲染具名插槽 item.slots 里配置的插槽名和对应的字符串（字符串指向当前组件的 slots 中定义的插槽函数）
-        // <template #prefixInput>...</template>，item.slots = { prefix: "prefixInput" }
-        Object.entries(item.slots || {}).reduce((acc, [slotName, slotValue]) => {
-          if (typeof slotValue === "string" && slots[slotValue]) {
-            acc[slotName] = slots[slotValue];
-          } else if (typeof slotValue === "function") {
-            acc[slotName] = slotValue; // 直接传入渲染函数
-          }
-          return acc;
-        }, {} as Record<string, any>),
+        componentSlots,
       );
     };
   },

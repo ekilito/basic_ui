@@ -1,7 +1,9 @@
 <template>
   <div class="app-page">
     <a-form>
-      <template #keySlot> 插槽组件 </template>
+      <template #appendSlots>input append slot</template>
+      <template #footerSlots>select footer slot</template>
+      <template #keySlot>keySlot</template>
       <template #action>
         <el-button @click="handelClick" type="primary">提交</el-button>
       </template>
@@ -19,7 +21,7 @@ const formData = ref<any>({
     input: "",
   },
   ces: "",
-  // password: "123",
+  password: "",
   // number: undefined,
   // text: "",
   // time: "",
@@ -41,9 +43,8 @@ const formItems = computed<OptionItem[]>(() => [
     labelWidth: 120,
     placeholder: "请输入",
     slots: {
-      //  append: "appendSlots",
+      append: "appendSlots",
       prefix: () => h("i", "前缀"),
-      append: () => h("span", "后缀"),
     },
     onInput: () => {
       console.log("输入了");
@@ -61,14 +62,17 @@ const formItems = computed<OptionItem[]>(() => [
     placeholder: "请选择",
     required: true,
     span: 24,
+    filterable: true,
     options: [
-      { label: "ces1", value: 1 },
-      { label: "ces2", value: 2 },
-      { label: "ces3", value: 3 },
+      { label: "ces1", value: '1' },
+      { label: "ces2", value: '2' },
+      { label: "ces3", value: '3' },
     ],
     slots: {
       label: ({ label, value }: { label: string; value: any }) =>
         h("span", [h("span", `${label}: `), h("span", { style: { fontWeight: "bold" } }, value)]),
+
+      footer: "footerSlots",
     },
     onChange: (e: any) => {
       if (e == 1) {
@@ -77,24 +81,24 @@ const formItems = computed<OptionItem[]>(() => [
     },
   },
 
-  // {
-  //   label: "密码",
-  //   key: "password",
-  //   type: "password",
-  //   placeholder: "请输入",
-  //   if: (formData) => formData.select != 2,
-  // },
-  // {
-  //   label: "数字框",
-  //   key: "number",
-  //   type: "number",
-  //   max: 100,
-  //   min: 0,
-  //   placeholder: "请输入",
-  //   controls: false,
-  //   defaultValue: 66,
-  //   rules: [{ required: true, message: "请输入姓名", trigger: "blur" }],
-  // },
+  {
+    label: "密码",
+    key: "password",
+    type: "password",
+    clearable: true,
+    placeholder: "请输入"
+  },
+  {
+    label: "数字框",
+    key: "number",
+    type: "number",
+    max: 100,
+    min: 0,
+    placeholder: "请输入",
+    controls: false,
+    defaultValue: 66,
+    rules: [{ required: true, message: "请输入姓名", trigger: "blur" }],
+  },
   // {
   //   label: "文本框",
   //   key: "text",
