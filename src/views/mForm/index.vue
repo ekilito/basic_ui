@@ -18,8 +18,8 @@
 </template>
 
 <script setup lang="ts">
-import { FormInstance } from 'element-plus';
-import { FormOptions } from "./components/form/src/types/types";
+import { type FormInstance } from 'element-plus';
+import { type FormOptions } from "../../components/mForm/src/types/types";
 
 interface Scoped {
     form: FormInstance,

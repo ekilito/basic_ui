@@ -1,0 +1,36 @@
+:root {
+  --color-bg-color: #ebf4f5;
+  --color-light-line: #d1e6e6;
+
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  background-color: var(--color-bg-color);
+  
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+svg {
+  width: 1em;
+  height: 1em;
+}
+
+html,
+body,
+#app,
+.common-layout,
+.el-container,
+.el-menu {
+  height: 100%
+}
+
+.el-menu-vertical-demo:not(.el-menu--collapse) {
+  width: 200px;
+  min-height: 400px;
+}
+
+

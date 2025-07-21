@@ -1,18 +1,18 @@
 import { h, reactive, ref } from "vue";
-import basicForm from "../components/basicForm/index.vue";
+import aForm from "../components/form/src/index.vue";
 
 // props
-export const useBasicForm = (initialProps: Record<string, any>) => {
+export const useAForm = (initialProps: Record<string, any>) => {
   const formRef = ref();
   
   const reactiveProps = reactive({ ...initialProps }); // ✅ reactive props
 
   const Component = (_, { slots }) => {
-    return h(basicForm, { ...reactiveProps, ref: formRef }, slots);
+    return h(aForm, { ...reactiveProps, ref: formRef }, slots);
   };
 
   return {
-    basicForm: Component,
+    aForm: Component,
     validate() {
       return formRef.value?.validate();
     },
