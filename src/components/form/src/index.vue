@@ -19,6 +19,8 @@ import {
   ElTransfer,
   ElTreeSelect,
   ElUpload,
+  ElRadioButton,
+  ElCheckboxButton,
   type FormInstance,
 } from "element-plus";
 import {
@@ -110,7 +112,10 @@ const componentMap: Record<string, any> = {
 
   select: transformOptions(ElSelect, ElOption),
   radioGroup: transformOptions(ElRadioGroup, ElRadio),
+  radioGroupButton: transformOptions(ElRadioGroup, ElRadioButton),
   checkboxGroup: transformOptions(ElCheckboxGroup, ElCheckbox),
+  checkboxGroupButton: transformOptions(ElCheckboxGroup, ElCheckboxButton),
+
 
   treeSelect: ElTreeSelect,
   date: ElDatePicker,

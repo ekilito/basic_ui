@@ -3,6 +3,7 @@
     <a-form>
       <template #appendSlots>input append slot</template>
       <template #footerSlots>select footer slot</template>
+      <template #suffixSlots> RMB </template>
       <template #keySlot>keySlot</template>
       <template #action>
         <el-button @click="handelClick" type="primary">提交</el-button>
@@ -22,17 +23,26 @@ const formData = ref<any>({
   },
   ces: "",
   password: "",
-  // number: undefined,
-  // text: "",
-  // time: "",
-  // switch: false,
-  // radioGroup: 1,
-  // checkboxGroup: undefined,
-  // select: "",
-  // city: "",
-  // jd: "",
-  // treeSelect: "",
-  // keySlot: "",
+  number: undefined,
+  number2: undefined,
+  text: "",
+  time: "",
+  switch: true,
+  radioGroup: 1,
+  radioGroupButton: 1,
+  checkboxGroup: [],
+  checkboxGroupButton: [],
+  select: "",
+  city: "",
+  jd: "",
+  treeSelect: "",
+  startTime: "",
+  timeRange: "",
+  rate: 3,
+  color: "",
+  slider: 24,
+  cascader: [],
+  keySlot: "",
 });
 
 const formItems = computed<OptionItem[]>(() => [
@@ -64,9 +74,9 @@ const formItems = computed<OptionItem[]>(() => [
     span: 24,
     filterable: true,
     options: [
-      { label: "ces1", value: '1' },
-      { label: "ces2", value: '2' },
-      { label: "ces3", value: '3' },
+      { label: "ces1", value: "1" },
+      { label: "ces2", value: "2" },
+      { label: "ces3", value: "3" },
     ],
     slots: {
       label: ({ label, value }: { label: string; value: any }) =>
@@ -86,7 +96,7 @@ const formItems = computed<OptionItem[]>(() => [
     key: "password",
     type: "password",
     clearable: true,
-    placeholder: "请输入"
+    placeholder: "请输入",
   },
   {
     label: "数字框",
@@ -96,214 +106,266 @@ const formItems = computed<OptionItem[]>(() => [
     min: 0,
     placeholder: "请输入",
     controls: false,
-    defaultValue: 66,
-    rules: [{ required: true, message: "请输入姓名", trigger: "blur" }],
+    defaultValue: 20,
+    disabled: (formData) => formData.password == 123,
+    rules: [{ required: true, message: "请输入数字", trigger: "blur" }],
   },
-  // {
-  //   label: "文本框",
-  //   key: "text",
-  //   type: "textarea",
-  //   placeholder: "请输入",
-  //   resize: "none",
-  //   required: true,
-  // },
-  // {
-  //   label: "时间",
-  //   key: "time",
-  //   type: "datetime",
-  //   placeholder: "请输入时间",
-  //   valueFormat: "YYYY-MM-DD HH:mm:ss",
-  //   required: true,
-  //   style: {
-  //     width: "100%",
-  //   },
-  // },
-  // {
-  //   label: "switch",
-  //   key: "switch",
-  //   type: "switch",
-  // },
-  // {
-  //   label: "radioGroup",
-  //   key: "radioGroup",
-  //   type: "radioGroup",
-  //   options: [
-  //     { label: "radio1", value: 1 },
-  //     { label: "radio2", value: 2 },
-  //   ],
-  // },
-  // {
-  //   label: "checkboxGroup",
-  //   key: "checkboxGroup",
-  //   type: "checkboxGroup",
-  //   options: [
-  //     { label: "box1", value: 1 },
-  //     { label: "box2", value: 2 },
-  //   ],
-  // },
-  // {
-  //   label: "城市",
-  //   key: "city",
-  //   type: "select",
-  //   placeholder: "please select",
-  //   options: (formData: any) => {
-  //     if (formData.select == "1") return [{ label: "海淀", value: "1" }];
-  //     if (formData.select == "2")
-  //       return [
-  //         { label: "海淀", value: "1" },
-  //         { label: "浦东", value: "2" },
-  //       ];
-  //     return [];
-  //   },
-  //   // if: (formData) => !!formData.select,
-  // },
-  // {
-  //   label: "性别",
-  //   key: "select",
-  //   type: "select",
-  //   placeholder: "请选择",
-  //   required: true,
-  //   span: 24,
-  //   options: [
-  //     { name: "男", id: 1 },
-  //     { name: "女", id: 2 },
-  //   ],
-  //   fieldNames: {
-  //     label: "name",
-  //     value: "id",
-  //   },
-  //   onChange: (value: any) => {
-  //     // 联动
-  //     console.log(value, formData.value);
-  //   },
-  //   slots: {
-  //     // header: "headerSelect",
-  //     header: () => h("div", "我是 select 的 header slot"), // 推荐函数式插槽
-  //   },
-  // },
+  {
+    label: "数字框2",
+    key: "number2",
+    type: "number",
+    placeholder: "请输入",
+    precision: 2,
+    step: 0.1,
+    slots: {
+      prefix: () => h("span", {}, "￥"),
+      suffix: "suffixSlots",
+    },
+  },
+  {
+    label: "文本框",
+    key: "text",
+    type: "textarea",
+    placeholder: "请输入",
+    resize: "none",
+    required: true,
+  },
+  {
+    label: "时间",
+    key: "time",
+    type: "datetime",
+    placeholder: "请选择时间",
+    valueFormat: "YYYY-MM-DD HH:mm:ss",
+    required: true,
+    style: {
+      width: "100%",
+    },
+  },
+  {
+    label: "treeSelect",
+    key: "treeSelect",
+    type: "treeSelect",
+    // treeSelect 多包一层props（如果传了props格式化data字段， 需要包一层props）
+    props: {
+      placeholder: "请选择",
+      data: [
+        {
+          id: "1",
+          name: "one",
+          children: [
+            {
+              id: "1-1",
+              name: "two",
+              children: [
+                {
+                  id: "1-1-1",
+                  name: "three",
+                },
+              ],
+            },
+          ],
+        },
+      ],
+      onNodeClick: (e: any) => {
+        console.log(e);
+      },
+      props: {
+        label: "name",
+        value: "id",
+        children: "children",
+      },
+    },
+  },
+  {
+    label: "城市",
+    key: "city",
+    type: "select",
+    placeholder: "please select",
+    options: (formData: any) => {
+      if (formData.select == "1") return [{ label: "海淀", value: "1" }];
+      if (formData.select == "2")
+        return [
+          { label: "海淀", value: "1" },
+          { label: "浦东", value: "2" },
+        ];
+      return [];
+    },
+    if: (formData) => !!formData.select,
+  },
+  {
+    label: "性别",
+    key: "select",
+    type: "select",
+    placeholder: "请选择",
+    required: true,
+    span: 24,
+    options: [
+      { name: "男", id: 1 },
+      { name: "女", id: 2 },
+    ],
+    fieldNames: {
+      label: "name",
+      value: "id",
+    },
+    onChange: (value: any) => {
+      console.log(value, formData.value);
+    },
+    slots: {
+      header: () => h("div", "我是 select 的 header slot"), // 推荐函数式插槽
+    },
+  },
 
-  // {
-  //   label: "街道",
-  //   key: "jd",
-  //   type: "input",
-  //   disabled: (formData) => !formData.city, // 没有选择城市就禁用
-  // },
-  // {
-  //   label: "treeSelect",
-  //   key: "treeSelect",
-  //   type: "treeSelect",
-  //   // treeSelect 多包一层props（如果传了props格式化data字段， 需要包一层props）
-  //   props: {
-  //     placeholder: "请选择",
-  //     data: [
-  //       {
-  //         id: "1",
-  //         name: "one",
-  //         children: [
-  //           {
-  //             id: "1-1",
-  //             name: "two",
-  //             children: [
-  //               {
-  //                 id: "1-1-1",
-  //                 name: "three",
-  //               },
-  //             ],
-  //           },
-  //         ],
-  //       },
-  //     ],
-  //     onNodeClick: (e:any) => {
-  //       console.log(e);
-  //     },
-  //     props: {
-  //       label: "name",
-  //       value: "id",
-  //       children: "children",
-  //     },
-  //   },
-  // },
-  // {
-  //   label: "time",
-  //   key: "time",
-  //   type: "time",
-  //   placeholder: "请输入时间",
-  //   disabled: (formData) => formData.switch === true
-  // },
-  // {
-  //   label: "timeRange",
-  //   key: "timeRange",
-  //   type: "timeRange",
-  //   rangeSeparator: "To",
-  //   startPlaceholder: "Start time",
-  //   endPlaceholder: "End time",
-  //   // isRange: true
-  // },
-  // {
-  //   label: "rate",
-  //   key: "rate",
-  //   type: "rate",
-  //   disabled: true
-  // },
-  // {
-  //   label: "color",
-  //   key: "color",
-  //   type: "color",
-  //   if: false
-  // },
-  // {
-  //   label: "slider",
-  //   key: "slider",
-  //   type: "slider",
-  // },
+  {
+    label: "街道",
+    key: "jd",
+    type: "input",
+    placeholder: "请输入街道",
+    disabled: (formData) => !formData.city, // 没有选择城市就禁用
+  },
+  {
+    label: "switch",
+    key: "switch",
+    type: "switch",
+    // style: "--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949",
+    inlinePrompt: true,
+    activeText: "是",
+    inactiveText: "否",
+  },
+  {
+    label: "radioGroup",
+    key: "radioGroup",
+    type: "radioGroup",
+    for: "", // 禁用 label 关联
+    options: [
+      { label: "radio1", value: 1 },
+      { label: "radio2", value: 2 },
+    ],
+    onChange: (e: any) => {
+      console.log(e);
+    },
+  },
+  {
+    label: "radioGroupButton",
+    key: "radioGroupButton",
+    type: "radioGroupButton",
+    for: "", // 禁用 label 关联
+    options: () => {
+      return [
+        { label: "radio1", value: 1 },
+        { label: "radio2", value: 2 },
+      ];
+    },
+    if: (formData) => formData.switch === true,
+  },
+  {
+    label: "checkboxGroup",
+    key: "checkboxGroup",
+    type: "checkboxGroup",
+    for: "",
+    options: [
+      { label: "box1", value: 1 },
+      { label: "box2", value: 2 },
+    ],
+    if: (formData) => formData.switch === true,
+  },
+  {
+    label: "checkboxGroupButton",
+    key: "checkboxGroupButton",
+    type: "checkboxGroupButton",
+    for: "",
+    options: [
+      { label: "box1", value: 1 },
+      { label: "box2", value: 2 },
+    ],
+    if: (formData) => formData.switch === true,
+  },
 
-  // {
-  //   label: "cascader",
-  //   key: "cascader",
-  //   type: "cascader",
-  //   // 如果传了props格式化字段，需要包一层props
-  //   props: {
-  //     placeholder: "please select",
-  //     options: [
-  //       {
-  //         id: "guide",
-  //         name: "Guide",
-  //         children: [
-  //           {
-  //             id: "disciplines",
-  //             name: "Disciplines",
-  //             children: [
-  //               {
-  //                 id: "consistency",
-  //                 name: "Consistency",
-  //               },
-  //               {
-  //                 id: "feedback",
-  //                 name: "Feedback",
-  //               },
-  //             ],
-  //           },
-  //         ],
-  //       },
-  //     ],
-  //     props: {
-  //       label: "name",
-  //       value: "id",
-  //     },
-  //   },
-  // },
-  // {
-  //   label: "transfer",
-  //   key: "transfer",
-  //   type: "transfer",
-  //   data: [
-  //     { key: 1, label: "Option 1", disabled: false },
-  //     { key: 2, label: "Option 2", disabled: false },
-  //     { key: 3, label: "Option 3", disabled: false },
-  //     { key: 4, label: "Option 4", disabled: true },
-  //     { key: 5, label: "Option 5", disabled: false },
-  //   ],
-  // },
+  {
+    label: "startTime",
+    key: "startTime",
+    type: "time",
+    placeholder: "请输入时间",
+    if: (formData) => formData.switch === true,
+  },
+  {
+    label: "timeRange",
+    key: "timeRange",
+    type: "timeRange",
+    rangeSeparator: "To",
+    startPlaceholder: "Start time",
+    endPlaceholder: "End time",
+    if: (formData) => formData.switch === true,
+    // isRange: true
+  },
+  {
+    label: "rate",
+    key: "rate",
+    type: "rate",
+    for: "",
+    if: (formData) => formData.switch === true,
+  },
+  {
+    label: "color",
+    key: "color",
+    type: "color",
+    for: "",
+    if: (formData) => formData.switch === true,
+  },
+  {
+    label: "slider",
+    key: "slider",
+    type: "slider",
+    for: "",
+    if: (formData) => formData.switch === true,
+  },
+
+  {
+    label: "cascader",
+    key: "cascader",
+    type: "cascader",
+    // 如果传了props格式化字段，需要包一层props
+    props: {
+      placeholder: "please select",
+      options: [
+        {
+          id: "guide",
+          name: "Guide",
+          children: [
+            {
+              id: "disciplines",
+              name: "Disciplines",
+              children: [
+                {
+                  id: "consistency",
+                  name: "Consistency",
+                },
+                {
+                  id: "feedback",
+                  name: "Feedback",
+                },
+              ],
+            },
+          ],
+        },
+      ],
+      props: {
+        label: "name",
+        value: "id",
+      },
+    },
+  },
+  {
+    label: "transfer",
+    key: "transfer",
+    type: "transfer",
+    data: [
+      { key: 1, label: "Option 1", disabled: false },
+      { key: 2, label: "Option 2", disabled: false },
+      { key: 3, label: "Option 3", disabled: false },
+      { key: 4, label: "Option 4", disabled: true },
+      { key: 5, label: "Option 5", disabled: false },
+    ],
+  },
   {
     label: "keySlot",
     key: "keySlot",
