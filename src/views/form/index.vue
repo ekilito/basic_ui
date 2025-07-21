@@ -27,6 +27,7 @@ const formData = ref<any>({
   number2: undefined,
   text: "",
   time: "",
+  file: '',
   switch: true,
   radioGroup: 1,
   radioGroupButton: 1,
