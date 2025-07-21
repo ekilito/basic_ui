@@ -186,7 +186,7 @@ function getProps(item: Record<string, any>) {
 provide("formData", formData);
 
 // 设置默认值 （只会初始化时执行一次）
-props.formItems.forEach((item:any) => {
+props.formItems.forEach((item: any) => {
   if (item.key && item.defaultValue !== undefined && get(formData.value, item.key) === undefined) {
     set(formData.value, item.key, item.defaultValue);
   }
@@ -203,7 +203,7 @@ const resolveItem = (item: any, formData: any) => {
     clone.options = newOptions;
     // 新选项里不包含旧值时，才清空
     const oldValue = get(formData, clone.key);
-    const optionValues = newOptions.map((opt:any) => opt.value ?? opt.id ?? opt.key);
+    const optionValues = newOptions.map((opt: any) => opt.value ?? opt.id ?? opt.key);
     // 如果旧值不在新选项中，就清空为 null
     if (oldValue != null && !optionValues.includes(oldValue)) {
       set(formData, clone.key, null); // 更安全
@@ -215,7 +215,7 @@ const resolveItem = (item: any, formData: any) => {
 
 // const items = computed(() => props.formItems.filter((item) => !item.hidden));
 const items = computed(() =>
-  props.formItems.map((item:any) => resolveItem(item, formData.value)).filter((item:any) => !item.hidden),
+  props.formItems.map((item: any) => resolveItem(item, formData.value)).filter((item: any) => !item.hidden),
 );
 
 // 组件动态渲染 支持直接传入组件
@@ -267,6 +267,8 @@ const ComponentItem = {
         Object.entries(item.slots || {}).reduce((acc, [slotName, slotValue]) => {
           if (typeof slotValue === "string" && slots[slotValue]) {
             acc[slotName] = slots[slotValue];
+          } else if (typeof slotValue === "function") {
+            acc[slotName] = slotValue; // 直接传入渲染函数
           }
           return acc;
         }, {} as Record<string, any>),
@@ -314,7 +316,7 @@ watch(
  * 暴露的api方法
  */
 defineExpose({
-  validate(...args:any) {
+  validate(...args: any) {
     return formInstance.value?.validate(...args);
   },
   resetFields() {
@@ -498,3 +500,4 @@ function getFormItemProps(item: Record<string, any>) {
   /* 空白高度，自己调 */
 }
 </style>
+
