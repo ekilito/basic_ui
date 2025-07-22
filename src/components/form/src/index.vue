@@ -147,7 +147,7 @@ const componentMap: Record<string, any> = {
   }),
 };
 
-const rootProps = ["label", "key", "type", "span", "hidden", "if", "unit", "defaultValue", "trim"];
+const rootProps = ["label", "key", "type", "span", "unit","trim", "hidden", "if", "defaultValue"];
 
 function getProps(item: Record<string, any>) {
   // 如果表单项里存在 props 字段，说明用户手动定义了控件的全部 props，直接返回这个 props，不再继续自动处理。
@@ -396,7 +396,7 @@ const innerRules = computed(() => {
       mergedRules[item.key] = item.rules;
     } else if (item.required) {
       const isSelectLike =
-        ["select", "radioGroup", "checkboxGroup"].includes(item.type) || item.type?.includes("picker");
+        ["select", "radioGroup", "checkboxGroup", "radioGroupButton", "checkboxGroupButton"].includes(item.type) || item.type?.includes("picker");
 
       const actionWord = isSelectLike ? "请选择" : "请输入";
 
@@ -424,7 +424,7 @@ function getFormItemProps(item: Record<string, any>) {
     "inlineMessage",
     "size",
     "labelPosition",
-    "for",
+    "for", 
     "validateStatus",
   ];
   return Object.fromEntries(allowedProps.filter((key) => key in item).map((key) => [key, item[key]]));

@@ -30,7 +30,7 @@ const formData = ref<any>({
   text: "",
   time: "",
   file: "",
-  switch: false,
+  switch: true,
   radioGroup: 1,
   radioGroupButton: 1,
   checkboxGroup: [],
