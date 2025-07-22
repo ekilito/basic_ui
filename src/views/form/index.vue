@@ -17,6 +17,7 @@ import { ref, computed, h } from "vue";
 import { useAForm } from "../../hooks/useAForm.ts";
 import { type OptionItem } from "../../components/form/src/types/types.ts";
 import AUpload from "../../components/form/src/components/AUpload.vue";
+import ATimerPicker from "../../components/form/src/components/ATimerPicker.vue"
 import { ElMessage } from "element-plus";
 
 const formData = ref<any>({
@@ -30,6 +31,7 @@ const formData = ref<any>({
   text: "",
   time: "",
   file: "",
+  startTimes: "",
   switch: true,
   radioGroup: 1,
   radioGroupButton: 1,
@@ -235,6 +237,12 @@ const formItems = computed<OptionItem[]>(() => [
       ElMessage({ message: "上传成功", type: "success" });
     },
     rules: [{ required: true, message: "upload", trigger: "change" }],
+  },
+  {
+    label: '开始时间',
+    key: 'startTimes',
+    type: ATimerPicker,
+     rules: [{ required: true, message: "ATimerPicker", trigger: "blur" }],
   },
   {
     label: "switch",
