@@ -16,8 +16,6 @@
 import { ref, computed, h } from "vue";
 import { useAForm } from "../../hooks/useAForm.ts";
 import { type OptionItem } from "../../components/form/src/types/types.ts";
-import AUpload from "../../components/form/src/components/AUpload.vue";
-import ATimerPicker from "../../components/form/src/components/ATimerPicker.vue"
 import { ElMessage } from "element-plus";
 
 const formData = ref<any>({
@@ -32,6 +30,12 @@ const formData = ref<any>({
   time: "",
   file: "",
   startTimes: "",
+  // position: null,
+  position: {
+    longitude: null,
+    latitude: null,
+    altitude: null,
+  },
   switch: true,
   radioGroup: 1,
   radioGroupButton: 1,
@@ -230,7 +234,7 @@ const formItems = computed<OptionItem[]>(() => [
   {
     label: "文件上传",
     key: "file",
-    type: AUpload,
+    type: "AUpload",
     accept: ".png,.pdf",
     onChange: (e: any) => {
       console.log("选择的文件:", e);
@@ -239,10 +243,45 @@ const formItems = computed<OptionItem[]>(() => [
     rules: [{ required: true, message: "upload", trigger: "change" }],
   },
   {
-    label: '开始时间',
-    key: 'startTimes',
-    type: ATimerPicker,
-     rules: [{ required: true, message: "ATimerPicker", trigger: "blur" }],
+    label: "开始时间",
+    key: "startTimes",
+    type: "ATimerPicker",
+    rules: [{ required: true, message: "ATimerPicker", trigger: "blur" }],
+  },
+  {
+    label: "经纬度坐标",
+    key: "position",
+    type: "ACoordinatePicker",
+    disabled: true,
+    onChange: (e: any) => {
+      console.log(e);
+    },
+    rules: [
+      {
+        required: true,
+        message: "请选择经纬度坐标",
+        trigger: "change",
+      },
+      {
+        validator: (rule, value, callback) => {
+          const { longitude, latitude, altitude } = value || {};
+          if (longitude == null || latitude == null || altitude == null) {
+            return callback(new Error("经度、纬度和高度不能为空"));
+          }
+          if (longitude < -180 || longitude > 180) {
+            return callback(new Error("经度范围应在 -180 到 180 之间"));
+          }
+          if (latitude < -90 || latitude > 90) {
+            return callback(new Error("纬度范围应在 -90 到 90 之间"));
+          }
+          if (altitude < 0) {
+            return callback(new Error("高度不能为负数"));
+          }
+          callback();
+        },
+        trigger: "change",
+      },
+    ],
   },
   {
     label: "switch",

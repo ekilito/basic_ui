@@ -36,6 +36,9 @@ import {
 } from "vue";
 import { get, omit, set } from "lodash-es";
 import { type OptionItem } from "./types/types";
+import AUpload from './components/AUpload.vue';
+import ATimerPicker from './components/ATimerPicker.vue';
+import ACoordinatePicker from './components/ACoordinatePicker.vue';
 
 const props = defineProps(["formItems", "rules"]);
 
@@ -135,6 +138,10 @@ const componentMap: Record<string, any> = {
   color: ElColorPicker,
   transfer: ElTransfer,
   upload: ElUpload,
+
+  AUpload: AUpload,
+  ATimerPicker:ATimerPicker,
+  ACoordinatePicker,
 
   // mySelect: MySelect
   // 异步导入

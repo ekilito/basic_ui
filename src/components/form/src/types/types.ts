@@ -29,6 +29,8 @@ export interface OptionItem {
     | "color"
     | "transfer"
     | "upload"
+    | "AUpload"
+    | "ATimerPicker"
     | "divider"
     | "title"
     | "blank"
