@@ -16,6 +16,8 @@
 import { ref, computed, h } from "vue";
 import { useAForm } from "../../hooks/useAForm.ts";
 import { type OptionItem } from "../../components/form/src/types/types.ts";
+import AUpload from "../../components/form/src/components/AUpload.vue";
+import { ElMessage } from "element-plus";
 
 const formData = ref<any>({
   data: {
@@ -27,8 +29,8 @@ const formData = ref<any>({
   number2: undefined,
   text: "",
   time: "",
-  file: '',
-  switch: true,
+  file: "",
+  switch: false,
   radioGroup: 1,
   radioGroupButton: 1,
   checkboxGroup: [],
@@ -222,6 +224,17 @@ const formItems = computed<OptionItem[]>(() => [
     type: "input",
     placeholder: "请输入街道",
     disabled: (formData) => !formData.city, // 没有选择城市就禁用
+  },
+  {
+    label: "文件上传",
+    key: "file",
+    type: AUpload,
+    accept: ".png,.pdf",
+    onChange: (e: any) => {
+      console.log("选择的文件:", e);
+      ElMessage({ message: "上传成功", type: "success" });
+    },
+    rules: [{ required: true, message: "upload", trigger: "change" }],
   },
   {
     label: "switch",

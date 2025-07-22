@@ -32,6 +32,7 @@ export interface OptionItem {
     | "divider"
     | "title"
     | "blank"
+    | any
     | undefined;
 
   label?: string;
