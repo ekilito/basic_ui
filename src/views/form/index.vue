@@ -59,10 +59,10 @@ const formData = ref<any>({
 });
 
 const options1 = ref([
- { label: "ces1", value: "1" },
-      { label: "ces2", value: "2" },
-      { label: "ces3", value: "3" },
-])
+  { label: "ces1", value: "1" },
+  { label: "ces2", value: "2" },
+  { label: "ces3", value: "3" },
+]);
 
 const formItems = computed<OptionItem[]>(() => [
   {
@@ -297,7 +297,11 @@ const formItems = computed<OptionItem[]>(() => [
     key: "file",
     type: "AUpload",
     accept: ".png,.pdf",
-    onChange: (e: any) => {
+    onChange: async (e: any) => {
+      console.log("开始上传文件...", e);
+      // 模拟异步等待（如上传耗时）
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       console.log("选择的文件:", e);
       ElMessage({ message: "上传成功", type: "success" });
     },
