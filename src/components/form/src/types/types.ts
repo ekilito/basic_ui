@@ -40,8 +40,12 @@ export interface OptionItem {
   labelWidth?: number | string;
   rules?: RuleItem[];
   required?: boolean;
-  slots?: any
+  slots?: any;
   options?: any
+  //  options?: 
+  //   | OptionItem[] 
+  //   | ((formData: any) => OptionItem[] | Promise<OptionItem[]>);
+  // _loading?: boolean; // 异步加载状态
   unit?: string;
   trim?: boolean;
   hidden?: boolean;

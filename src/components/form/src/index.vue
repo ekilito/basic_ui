@@ -33,6 +33,7 @@ import {
   useSlots,
   useTemplateRef,
   watch,
+  reactive,
 } from "vue";
 import { get, omit, set } from "lodash-es";
 import { type OptionItem } from "./types/types";
@@ -210,31 +211,167 @@ props.formItems.forEach((item: any) => {
   }
 });
 
-// 缓存 & 计算处理表单项 resolveItem 支持函数写法动态计算。
-const lastOptionsCache = new Map<string, any[]>();
+// 全局状态管理
+const asyncOptionsState = reactive(new Map<string, {
+  options: any[];
+  loading: boolean;
+}>());
+
+const optionsCache = new Map<string, any[]>(); // 结果缓存
+const optionsLoadingCache = new Map<string, boolean>(); // loading 缓存
+const optionsPromiseCache = new Map<string, Promise<any[]>>(); // Promise 缓存
+const optionsParamsCache = new Map<string, string>(); // 上次参数快照缓存
+
 const resolveItem = (item: any, formData: any) => {
   const clone = { ...item };
   typeof clone.if === "function" && (clone.hidden = !clone.if(formData));
   typeof clone.disabled === "function" && (clone.disabled = clone.disabled(formData));
-  if (typeof clone.options === "function") {
-    const newOptions = clone.options(formData);
-    clone.options = newOptions;
-    // 新选项里不包含旧值时，才清空
-    const oldValue = get(formData, clone.key);
-    const optionValues = newOptions.map((opt: any) => opt.value ?? opt.id ?? opt.key);
-    // 如果旧值不在新选项中，就清空为 null
-    if (oldValue != null && !optionValues.includes(oldValue)) {
-      set(formData, clone.key, null); // 更安全
-    }
-    lastOptionsCache.set(clone.key, newOptions);
+
+  if (!asyncOptionsState.has(item.key)) {
+    asyncOptionsState.set(item.key, reactive({
+      options: [],
+      loading: false,
+    }));
   }
-  return clone;
+
+  const state = asyncOptionsState.get(item.key)!;
+
+  // 计算依赖快照（没有 deps 时为 null）
+  const paramsKey = item.deps
+    ? JSON.stringify(
+        item.deps.reduce((acc, depKey) => {
+          acc[depKey] = formData[depKey];
+          return acc;
+        }, {} as Record<string, any>)
+      )
+    : null;
+
+  const prevParamsKey = optionsParamsCache.get(item.key);
+  const depsChanged = item.deps ? prevParamsKey !== paramsKey : false;
+
+  if (typeof clone.options === "function") {
+    if (item.deps) {
+      // 只有声明 deps 且依赖变化，才清缓存
+      if (depsChanged) {
+        optionsCache.delete(item.key);
+        optionsPromiseCache.delete(item.key);
+        optionsParamsCache.set(item.key, paramsKey);
+      }
+    } else {
+      // 没声明 deps 的，只执行一次（第一次没有缓存时执行）
+      if (!optionsCache.has(item.key)) {
+        optionsParamsCache.set(item.key, 'initialized');
+      }
+    }
+  }
+
+  if (optionsCache.has(item.key)) {
+    state.options = optionsCache.get(item.key)!;
+    state.loading = false;
+  } else if (typeof clone.options === "function") {
+    if (optionsPromiseCache.has(item.key)) {
+      state.loading = true;
+      optionsPromiseCache.get(item.key)!.then((res) => {
+        optionsCache.set(item.key, res);
+        state.options = res;
+        state.loading = false;
+        optionsLoadingCache.set(item.key, false);
+
+        const oldValue = get(formData, item.key);
+        const optionValues = res.map((opt: any) => opt.value ?? opt.id ?? opt.key);
+        if (oldValue != null && !optionValues.includes(oldValue)) {
+          set(formData, item.key, null);
+        }
+      }).catch(() => {
+        state.options = [];
+        state.loading = false;
+        optionsLoadingCache.set(item.key, false);
+      });
+    } else {
+      const result = clone.options(formData);
+
+      if (result instanceof Promise) {
+        optionsLoadingCache.set(item.key, true);
+        state.loading = true;
+
+        optionsPromiseCache.set(item.key, result);
+
+        result.then((res) => {
+          optionsCache.set(item.key, res);
+          state.options = res;
+          state.loading = false;
+          optionsLoadingCache.set(item.key, false);
+          optionsPromiseCache.delete(item.key);
+
+          const oldValue = get(formData, item.key);
+          const optionValues = res.map((opt: any) => opt.value ?? opt.id ?? opt.key);
+          if (oldValue != null && !optionValues.includes(oldValue)) {
+            set(formData, item.key, null);
+          }
+        }).catch(() => {
+          state.options = [];
+          state.loading = false;
+          optionsLoadingCache.set(item.key, false);
+          optionsPromiseCache.delete(item.key);
+        });
+      } else {
+        optionsCache.set(item.key, result);
+        state.options = result;
+        state.loading = false;
+
+        const oldValue = get(formData, item.key);
+        const optionValues = result.map((opt: any) => opt.value ?? opt.id ?? opt.key);
+        if (oldValue != null && !optionValues.includes(oldValue)) {
+          set(formData, item.key, null);
+        }
+      }
+    }
+  } else if (Array.isArray(clone.options)) {
+    optionsCache.set(item.key, clone.options);
+    state.options = clone.options;
+    state.loading = false;
+  }
+
+  return {
+    ...clone,
+    options: state.options,
+    loading: state.loading,
+  };
 };
 
-// const items = computed(() => props.formItems.filter((item) => !item.hidden));
+
+
+
+
 const items = computed(() =>
   props.formItems.map((item: any) => resolveItem(item, formData.value)).filter((item: any) => !item.hidden),
 );
+
+// 缓存 & 计算处理表单项 resolveItem 支持函数写法动态计算。
+// const lastOptionsCache = new Map<string, any[]>();
+// const resolveItem = (item: any, formData: any) => {
+//   const clone = { ...item };
+//   typeof clone.if === "function" && (clone.hidden = !clone.if(formData));
+//   typeof clone.disabled === "function" && (clone.disabled = clone.disabled(formData));
+//   if (typeof clone.options === "function") {
+//     const newOptions = clone.options(formData);
+//     clone.options = newOptions;
+//     // 新选项里不包含旧值时，才清空
+//     const oldValue = get(formData, clone.key);
+//     const optionValues = newOptions.map((opt: any) => opt.value ?? opt.id ?? opt.key);
+//     // 如果旧值不在新选项中，就清空为 null
+//     if (oldValue != null && !optionValues.includes(oldValue)) {
+//       set(formData, clone.key, null); // 更安全
+//     }
+//     lastOptionsCache.set(clone.key, newOptions);
+//   }
+//   return clone;
+// };
+
+// const items = computed(() => props.formItems.filter((item) => !item.hidden));
+// const items = computed(() =>
+//   props.formItems.map((item: any) => resolveItem(item, formData.value)).filter((item: any) => !item.hidden),
+// );
 
 // 组件动态渲染 支持直接传入组件
 function getComponent(item: Record<string, any>) {
@@ -286,6 +423,7 @@ const ComponentItem = {
           // 组件 props
           ...getProps(item),
           // ...reactive(getProps(item))
+          loading: item.loading, // 确保传递 loading 状态
 
           formData: formData.value, // 透传自定义组件
         },
@@ -325,7 +463,7 @@ watch(
   () => {
     // formData 变动后会自动刷新 items 和 props（因为是 computed）
     // 这里不需要额外做事，但必须加 watch 保证响应式连通性
-    lastOptionsCache.clear(); // 防止缓存数据过时
+    // lastOptionsCache.clear(); // 防止缓存数据过时
   },
   { deep: true },
 );

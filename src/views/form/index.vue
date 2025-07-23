@@ -55,11 +55,84 @@ const formData = ref<any>({
   keySlot: "",
 });
 
+
+
 const formItems = computed<OptionItem[]>(() => [
   {
-   label: 'AForm',
-   type: 'title'
+    label: "AForm",
+    type: "title",
   },
+  // 同步测试
+  {
+    label: '同步',
+    key: "sync_test1",
+    type: "select",
+    options: () => {
+      console.log("我是1同步");
+      return [
+        { label: "测试1", value: "1" },
+        { label: "测试2", value: "2" },
+      ];
+    },
+  },
+
+   {
+     label: 'api异步',
+    key: "async_test22",
+    type: "select",
+    options: async () => {
+      console.log('api异步')
+       await new Promise(resolve => setTimeout(resolve, 2000));
+        const response = await fetch("https://jsonplaceholder.typicode.com/users");
+        const users = await response.json();
+        return users.map((user: any) => ({
+          label: user.name,
+          value: user.id,
+        }));
+     
+    },
+  },
+
+  {
+     label: 'settimeout2s',
+    key: "async_test222",
+    type: "select",
+    options: async () => {
+      console.log('settimeout异步 调用之前')
+         await new Promise(resolve => setTimeout(resolve, 2000));
+      return [
+        { label: "异步选项1", value: 1 },
+        { label: "异步选项2", value: 2 }
+      ];
+     
+    },
+  },
+
+  // 异步测试
+  {
+     label: '条件异步',
+    key: "async_test1",
+    type: "select",
+    deps: ["sync_test1"],
+    options: async (formData: any) => {
+      console.log("条件异步执次");
+      if (formData.sync_test1 == 1) {
+        const response = await fetch("https://jsonplaceholder.typicode.com/users");
+        const users = await response.json();
+         console.log(users)
+        return users.map((user: any) => ({
+          label: user.name,
+          value: user.id,
+        }));
+      } else if (formData.sync_test1 == 2) {
+        console.log(formData.sync_test1)
+        return [{ label: "测试2", value: "2" }];
+      }
+      return []
+    },
+  },
+
+ 
   {
     label: "姓名",
     key: "data.input",
@@ -195,6 +268,7 @@ const formItems = computed<OptionItem[]>(() => [
     key: "city",
     type: "select",
     placeholder: "please select",
+    deps: ["select"],
     options: (formData: any) => {
       if (formData.select == "1") return [{ label: "海淀", value: "1" }];
       if (formData.select == "2")
