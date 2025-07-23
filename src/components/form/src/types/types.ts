@@ -59,7 +59,7 @@ export interface OptionItem {
   if?: boolean | ((formData: Record<string, any>) => boolean);
   disabled?: boolean | ((formData: Record<string, any>) => boolean);
   placeholder?: string;
-  style?: CSSProperties;
+  style?: CSSProperties | string;
   [key: string]: any;
 }
 
