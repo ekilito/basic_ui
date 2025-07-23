@@ -31,9 +31,7 @@ export interface OptionItem {
     | "upload"
     | "AUpload"
     | "ATimerPicker"
-    | "divider"
     | "title"
-    | "blank"
     | any
     | undefined;
 

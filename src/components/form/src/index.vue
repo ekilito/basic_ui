@@ -449,16 +449,8 @@ function getFormItemProps(item: Record<string, any>) {
   >
     <el-row :gutter="10">
       <el-col v-for="(item, index) in items" :key="item.key || item.type + index" :span="item.span || 24">
-        <template v-if="item.type === 'divider'">
-          <div class="form-divider"></div>
-        </template>
-
-        <template v-else-if="item.type === 'title'">
+        <template v-if="item.type === 'title'">
           <div class="form-title">{{ item.label }}</div>
-        </template>
-
-        <template v-else-if="item.type === 'blank'">
-          <div class="form-blank"></div>
         </template>
 
         <template v-else>
@@ -499,23 +491,21 @@ function getFormItemProps(item: Record<string, any>) {
   }
 }
 
-.form-divider {
-  border-bottom: 1px solid #e0e0e0;
-  margin: 16px 0;
-  width: 100%;
-}
 
 .form-title {
-  font-weight: 600;
-  font-size: 18px;
-  padding: 8px 0;
-  color: #333;
-  margin-left: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 98px;
+  width: 300px;
+  // color: #60d4f7;
+  font-size: 16px;
+  font-weight: bold;
+  background: url("./assets/header.png");
+  background-size: 100% 100%;
+  margin: 0 auto;
 }
 
-.form-blank {
-  height: 24px;
-  /* 空白高度，自己调 */
-}
+
 </style>
 
