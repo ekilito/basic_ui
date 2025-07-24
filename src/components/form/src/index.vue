@@ -35,13 +35,13 @@ import {
   useSlots,
   useTemplateRef,
   watch,
-  reactive
+  reactive,
 } from "vue";
 import { get, omit, set } from "lodash-es";
 import { type OptionItem } from "./types/types";
-import AUpload from './components/AUpload.vue';
-import ATimerPicker from './components/ATimerPicker.vue';
-import ACoordinatePicker from './components/ACoordinatePicker.vue';
+import AUpload from "./components/AUpload.vue";
+import ATimerPicker from "./components/ATimerPicker.vue";
+import ACoordinatePicker from "./components/ACoordinatePicker.vue";
 
 // const props = defineProps(["formItems", "rules"]);
 // const props = defineProps<{
@@ -54,17 +54,16 @@ const props = withDefaults(
   defineProps<{
     formItems: OptionItem[];
     rules?: Record<string, any>;
-    formConfig?: Partial<FormProps> 
+    formConfig?: Partial<FormProps>;
   }>(),
   {
     rules: () => ({}),
     formConfig: () => ({
-      labelWidth: '120px',
-      labelSuffix: ":"
-    })
-  }
+      labelWidth: "120px",
+      labelSuffix: ":",
+    }),
+  },
 );
-
 
 const formInstance = useTemplateRef<FormInstance>("formRef");
 
@@ -143,7 +142,6 @@ const componentMap: Record<string, any> = {
   checkboxGroup: transformOptions(ElCheckboxGroup, ElCheckbox),
   checkboxGroupButton: transformOptions(ElCheckboxGroup, ElCheckboxButton),
 
-
   treeSelect: ElTreeSelect,
   date: ElDatePicker,
   datetime: ElDatePicker,
@@ -164,7 +162,7 @@ const componentMap: Record<string, any> = {
   upload: ElUpload,
 
   AUpload: AUpload,
-  ATimerPicker:ATimerPicker,
+  ATimerPicker: ATimerPicker,
   ACoordinatePicker,
 
   // mySelect: MySelect
@@ -178,7 +176,7 @@ const componentMap: Record<string, any> = {
   }),
 };
 
-const rootProps = ["label", "key", "type", "span", "unit","trim", "hidden", "if", "defaultValue"];
+const rootProps = ["label", "key", "type", "span", "unit", "trim", "hidden", "if", "defaultValue"];
 
 function getProps(item: Record<string, any>) {
   // 如果表单项里存在 props 字段，说明用户手动定义了控件的全部 props，直接返回这个 props，不再继续自动处理。
@@ -235,10 +233,15 @@ props.formItems.forEach((item: any) => {
 });
 
 // 全局状态管理
-const asyncOptionsState = reactive(new Map<string, {
-  options: any[];
-  loading: boolean;
-}>());
+const asyncOptionsState = reactive(
+  new Map<
+    string,
+    {
+      options: any[];
+      loading: boolean;
+    }
+  >(),
+);
 
 const optionsCache = new Map<string, any[]>(); // 结果缓存
 const optionsLoadingCache = new Map<string, boolean>(); // loading 缓存
@@ -251,10 +254,13 @@ const resolveItem = (item: any, formData: any) => {
   typeof clone.disabled === "function" && (clone.disabled = clone.disabled(formData));
 
   if (!asyncOptionsState.has(item.key)) {
-    asyncOptionsState.set(item.key, reactive({
-      options: [],
-      loading: false,
-    }));
+    asyncOptionsState.set(
+      item.key,
+      reactive({
+        options: [],
+        loading: false,
+      }),
+    );
   }
 
   const state = asyncOptionsState.get(item.key)!;
@@ -265,7 +271,7 @@ const resolveItem = (item: any, formData: any) => {
         item.deps.reduce((acc: any, depKey: string) => {
           acc[depKey] = formData[depKey];
           return acc;
-        }, {} as Record<string, any>)
+        }, {} as Record<string, any>),
       )
     : null;
 
@@ -283,7 +289,7 @@ const resolveItem = (item: any, formData: any) => {
     } else {
       // 没声明 deps 的，只执行一次（第一次没有缓存时执行）
       if (!optionsCache.has(item.key)) {
-        optionsParamsCache.set(item.key, 'initialized');
+        optionsParamsCache.set(item.key, "initialized");
       }
     }
   }
@@ -294,22 +300,25 @@ const resolveItem = (item: any, formData: any) => {
   } else if (typeof clone.options === "function") {
     if (optionsPromiseCache.has(item.key)) {
       state.loading = true;
-      optionsPromiseCache.get(item.key)!.then((res) => {
-        optionsCache.set(item.key, res);
-        state.options = res;
-        state.loading = false;
-        optionsLoadingCache.set(item.key, false);
+      optionsPromiseCache
+        .get(item.key)!
+        .then((res) => {
+          optionsCache.set(item.key, res);
+          state.options = res;
+          state.loading = false;
+          optionsLoadingCache.set(item.key, false);
 
-        const oldValue = get(formData, item.key);
-        const optionValues = res.map((opt: any) => opt.value ?? opt.id ?? opt.key);
-        if (oldValue != null && !optionValues.includes(oldValue)) {
-          set(formData, item.key, null);
-        }
-      }).catch(() => {
-        state.options = [];
-        state.loading = false;
-        optionsLoadingCache.set(item.key, false);
-      });
+          const oldValue = get(formData, item.key);
+          const optionValues = res.map((opt: any) => opt.value ?? opt.id ?? opt.key);
+          if (oldValue != null && !optionValues.includes(oldValue)) {
+            set(formData, item.key, null);
+          }
+        })
+        .catch(() => {
+          state.options = [];
+          state.loading = false;
+          optionsLoadingCache.set(item.key, false);
+        });
     } else {
       const result = clone.options(formData);
 
@@ -319,24 +328,26 @@ const resolveItem = (item: any, formData: any) => {
 
         optionsPromiseCache.set(item.key, result);
 
-        result.then((res) => {
-          optionsCache.set(item.key, res);
-          state.options = res;
-          state.loading = false;
-          optionsLoadingCache.set(item.key, false);
-          optionsPromiseCache.delete(item.key);
+        result
+          .then((res) => {
+            optionsCache.set(item.key, res);
+            state.options = res;
+            state.loading = false;
+            optionsLoadingCache.set(item.key, false);
+            optionsPromiseCache.delete(item.key);
 
-          const oldValue = get(formData, item.key);
-          const optionValues = res.map((opt: any) => opt.value ?? opt.id ?? opt.key);
-          if (oldValue != null && !optionValues.includes(oldValue)) {
-            set(formData, item.key, null);
-          }
-        }).catch(() => {
-          state.options = [];
-          state.loading = false;
-          optionsLoadingCache.set(item.key, false);
-          optionsPromiseCache.delete(item.key);
-        });
+            const oldValue = get(formData, item.key);
+            const optionValues = res.map((opt: any) => opt.value ?? opt.id ?? opt.key);
+            if (oldValue != null && !optionValues.includes(oldValue)) {
+              set(formData, item.key, null);
+            }
+          })
+          .catch(() => {
+            state.options = [];
+            state.loading = false;
+            optionsLoadingCache.set(item.key, false);
+            optionsPromiseCache.delete(item.key);
+          });
       } else {
         optionsCache.set(item.key, result);
         state.options = result;
@@ -361,10 +372,6 @@ const resolveItem = (item: any, formData: any) => {
     loading: state.loading,
   };
 };
-
-
-
-
 
 const items = computed(() =>
   props.formItems.map((item: any) => resolveItem(item, formData.value)).filter((item: any) => !item.hidden),
@@ -564,7 +571,8 @@ const innerRules = computed(() => {
       mergedRules[item.key] = item.rules;
     } else if (item.required) {
       const isSelectLike =
-        ["select", "radioGroup", "checkboxGroup", "radioGroupButton", "checkboxGroupButton"].includes(item.type) || item.type?.includes("picker");
+        ["select", "radioGroup", "checkboxGroup", "radioGroupButton", "checkboxGroupButton"].includes(item.type) ||
+        item.type?.includes("picker");
 
       const actionWord = isSelectLike ? "请选择" : "请输入";
 
@@ -592,7 +600,7 @@ function getFormItemProps(item: Record<string, any>) {
     "inlineMessage",
     "size",
     "labelPosition",
-    "for", 
+    "for",
     "validateStatus",
   ];
   return Object.fromEntries(allowedProps.filter((key) => key in item).map((key) => [key, item[key]]));
@@ -600,13 +608,7 @@ function getFormItemProps(item: Record<string, any>) {
 </script>
 
 <template>
-  <el-form
-    ref="formRef"
-    :model="formData"
-    :rules="innerRules"
-    v-bind="formConfig"
-    :validate-on-rule-change="false"
-  >
+  <el-form ref="formRef" :model="formData" :rules="innerRules" v-bind="formConfig" :validate-on-rule-change="false">
     <el-row :gutter="10">
       <el-col v-for="(item, index) in items" :key="item.key || item.type + index" :span="item.span || 24">
         <template v-if="item.type === 'title'">
@@ -615,6 +617,17 @@ function getFormItemProps(item: Record<string, any>) {
 
         <template v-else>
           <el-form-item :label="item.label" :prop="item.key" v-bind="getFormItemProps(item)">
+            <template #label>
+              <span style="display: inline-flex; align-items: center; gap: 4px">
+                <span>{{ item.label }}</span>
+                <el-tooltip v-if="item.tooltip" :content="item.tooltip" placement="top" effect="dark">
+                  <el-icon style="cursor: pointer">
+                    <QuestionFilled />
+                  </el-icon>
+                </el-tooltip>
+              </span>
+            </template>
+
             <slot :name="item.key">
               <div class="form-item">
                 <ComponentItem :key="item.key" :item="item" class="component-item"></ComponentItem>
@@ -651,7 +664,6 @@ function getFormItemProps(item: Record<string, any>) {
   }
 }
 
-
 .form-title {
   display: flex;
   justify-content: center;
@@ -665,7 +677,5 @@ function getFormItemProps(item: Record<string, any>) {
   background-size: 100% 100%;
   margin: 0 auto;
 }
-
-
 </style>
 

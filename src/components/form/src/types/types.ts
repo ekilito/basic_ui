@@ -61,6 +61,7 @@ export interface OptionItem {
   placeholder?: string;
   style?: CSSProperties | string;
   [key: string]: any;
+  tooltip?: string
 }
 
 
