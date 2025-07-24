@@ -41,7 +41,11 @@ import AUpload from './components/AUpload.vue';
 import ATimerPicker from './components/ATimerPicker.vue';
 import ACoordinatePicker from './components/ACoordinatePicker.vue';
 
-const props = defineProps(["formItems", "rules"]);
+// const props = defineProps(["formItems", "rules"]);
+const props = defineProps<{
+  formItems: OptionItem[];
+  rules?: Record<string, any>;
+}>();
 
 const formInstance = useTemplateRef<FormInstance>("formRef");
 
@@ -65,7 +69,7 @@ const slots = useSlots();
  */
 function transformOptions(component: Component, optionsComponent: Component) {
   return (props: {
-    options: OptionItem[];
+    options: any[];
     fieldNames?: { label: string; value: string | number };
     slots?: Record<string, any>;
   }) => {
