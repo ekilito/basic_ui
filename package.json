@@ -10,8 +10,12 @@
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.1",
+    "@turf/turf": "^7.2.0",
     "element-plus": "^2.10.4",
     "lodash-es": "^4.17.21",
+    "mars3d": "^3.10.0",
+    "mars3d-cesium": "^1.131.1",
+    "mars3d-space": "^3.10.0",
     "scss": "^0.2.4",
     "vue": "^3.5.17",
     "vue-router": "^4.5.1"
@@ -23,6 +27,7 @@
     "sass-embedded": "^1.89.2",
     "typescript": "~5.8.3",
     "vite": "^7.0.0",
+    "vite-plugin-mars3d": "^4.2.2",
     "vue-tsc": "^2.2.10"
   }
 }

@@ -1,0 +1,88 @@
+{
+  "map3d": {
+    "scene": {
+      "center": {
+        "lat": 25.277218,
+        "lng": 103.327649,
+        "alt": 29000,
+        "pitch": -89.98
+      },
+      "clock": {
+        "multiplier": 1
+      },
+      "scene3DOnly": false,
+      "shadows": false,
+      "removeDblClick": true,
+      "sceneMode": 3,
+      "showSun": true,
+      "showMoon": true,
+      "showSkyBox": true,
+      "showSkyAtmosphere": true,
+      "fog": true,
+      "fxaa": true,
+      "requestRenderMode": true,
+      "globe": {
+        "depthTestAgainstTerrain": false,
+        "baseColor": "#546a53",
+        "showGroundAtmosphere": true,
+        "enableLighting": false
+      },
+      "cameraController": {
+        "zoomFactor": 3.0,
+        "minimumZoomDistance": 1,
+        "maximumZoomDistance": 50000000,
+        "enableRotate": true,
+        "enableTranslate": true,
+        "enableTilt": true,
+        "enableZoom": true,
+        "enableCollisionDetection": true,
+        "minimumCollisionTerrainHeight": 15000
+      }
+    },
+    "control": {
+      "homeButton": true,
+      "baseLayerPicker": false,
+      "sceneModePicker": true,
+      "vrButton": false,
+      "fullscreenButton": true,
+      "navigationHelpButton": true,
+      "animation": false,
+      "timeline": false,
+      "infoBox": false,
+      "geocoder": false,
+      "selectionIndicator": false,
+      "contextmenu": {
+        "hasDefault": true
+      },
+      "mouseDownView": true,
+      "zoom": {
+        "insertIndex": 1
+      },
+      "compass": {
+        "bottom": "toolbar",
+        "left": "5px"
+      },
+      "distanceLegend": {
+        "left": "100px",
+        "bottom": "2px"
+      },
+      "locationBar": {
+        "fps": true,
+        "crs": "CGCS2000_GK_Zone_3",
+        "crsDecimal": 0,
+        "template": "<div>经度:{lng}</div> <div>纬度:{lat}</div> <div>海拔：{alt}米</div> <div>方向：{heading}°</div> <div>俯仰角：{pitch}°</div><div class='hide700'>视高：{cameraHeight}米</div>"
+      }
+    },
+    "basemaps": [
+      {
+        "id": 2021,
+        "name": "天地图",
+        "icon": "/img/basemaps/tianditu_img.png",
+        "type": "tianditu",
+        "layer": "td_img",
+        "show": true
+      }
+    ],
+    "layers": []
+  }
+}

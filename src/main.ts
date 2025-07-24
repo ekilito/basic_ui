@@ -2,6 +2,8 @@ import { createApp } from 'vue'
 import './styles/base.css'
 import App from './App.vue'
 import router from './router'
+import "mars3d-cesium/Build/Cesium/Widgets/widgets.css";
+import "mars3d/mars3d.css";
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import * as AIcons from '@element-plus/icons-vue'

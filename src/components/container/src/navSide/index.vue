@@ -38,6 +38,11 @@ const data = [
     name: "chooseArea",
     index: "/chooseArea",
   },
+  {
+    icon: "Watermelon",
+    name: "mars3D",
+    index: "/mars3D",
+  },
 ];
 
 

@@ -31,6 +31,10 @@ const routes: RouteRecordRaw[] = [
         path: "/chooseArea",
         component: () => import("../views/chooseArea/index.vue"),
       },
+      {
+        path: "/mars3D",
+        component: () => import("../views/mars3D/index.vue"),
+      },
     ],
   },
 ];
