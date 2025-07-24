@@ -148,6 +148,15 @@ const formItems = computed<OptionItem[]>(() => [
     span: 24,
     filterable: true,
     options: options1.value,
+    appendButton: {
+      text: "操作",
+      onClick: (item: any, formModel: any) => {
+        console.log("当前项：", item);
+        console.log("当前表单数据：", formModel);
+        formModel.number = 100;
+        console.log(formData.value);
+      },
+    },
     slots: {
       label: ({ label, value }: { label: string; value: any }) =>
         h("span", [h("span", `${label}: `), h("span", { style: { fontWeight: "bold" } }, value)]),

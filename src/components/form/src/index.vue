@@ -632,6 +632,14 @@ function getFormItemProps(item: Record<string, any>) {
               <div class="form-item">
                 <ComponentItem :key="item.key" :item="item" class="component-item"></ComponentItem>
                 <span v-if="item.unit" class="unit-text">{{ item.unit }}</span>
+                <!-- 追加按钮 -->
+                <el-button
+                  v-if="item.appendButton"
+                  class="append-button"
+                  @click="item.appendButton.onClick(item, modelValue)"
+                >
+                  {{ item.appendButton.text }}
+                </el-button>
               </div>
             </slot>
             <!-- <component :is="getComponent(item)" v-model="formData[item.key]" v-bind="getProps(item)"></component> -->
@@ -661,6 +669,13 @@ function getFormItemProps(item: Record<string, any>) {
     color: #999;
     font-size: 16px;
     white-space: nowrap;
+  }
+  .append-button {
+    width: 80px;
+    margin-left: 6px;
+    // font-size: 14px;
+    white-space: nowrap;
+    // flex-shrink: 0;
   }
 }
 

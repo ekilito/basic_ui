@@ -61,7 +61,12 @@ export interface OptionItem {
   placeholder?: string;
   style?: CSSProperties | string;
   [key: string]: any;
-  tooltip?: string
+  tooltip?: string;
+  appendButton?: {
+    text: string;
+    onClick: (item: OptionItem, formModel: Record<string, any>) => void;
+    [key: string]: any;
+  };
 }
 
 
