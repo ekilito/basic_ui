@@ -42,6 +42,7 @@ import { type OptionItem } from "./types/types";
 import AUpload from "./components/AUpload.vue";
 import ATimerPicker from "./components/ATimerPicker.vue";
 import ACoordinatePicker from "./components/ACoordinatePicker.vue";
+import ADrawPath from './components/ADrawPath.vue';
 
 const props = withDefaults(
   defineProps<{
@@ -53,7 +54,7 @@ const props = withDefaults(
     rules: () => ({}),
     formConfig: () => ({
       labelWidth: "120px",
-      labelSuffix: ":",
+      labelSuffix: ":"
     }),
   },
 );
@@ -157,6 +158,7 @@ const componentMap: Record<string, any> = {
   AUpload: AUpload,
   ATimerPicker: ATimerPicker,
   ACoordinatePicker,
+  ADrawPath,
 
   // mySelect: MySelect
   // 异步导入
@@ -610,7 +612,7 @@ function getFormItemProps(item: Record<string, any>) {
 
         <template v-else>
           <el-form-item :label="item.label" :prop="item.key" v-bind="getFormItemProps(item)">
-            <template #label>
+            <!-- <template #label>
               <span style="display: inline-flex; align-items: center; gap: 4px">
                 <span>{{ item.label }}</span>
                 <el-tooltip v-if="item.tooltip" :content="item.tooltip" placement="top" effect="dark">
@@ -619,7 +621,7 @@ function getFormItemProps(item: Record<string, any>) {
                   </el-icon>
                 </el-tooltip>
               </span>
-            </template>
+            </template> -->
 
             <slot :name="item.key">
               <div class="form-item">

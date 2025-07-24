@@ -56,6 +56,7 @@ const formData = ref<any>({
   async_test2: "",
   async_test1: "",
   keySlot: "",
+  lineList: []
 });
 
 const options1 = ref([
@@ -118,6 +119,16 @@ const formItems = computed<OptionItem[]>(() => [
       return [];
     },
   },
+  {
+    label: '',
+    key: "lineList",
+    type: "ADrawPath",
+    labelWidth: '35px',
+    onChange: (positions: any) => {
+      console.log('positions:', positions)
+      console.log('formData.lineList', formData.value.lineList)
+    }
+  },
 
   {
     label: "姓名",
@@ -125,7 +136,7 @@ const formItems = computed<OptionItem[]>(() => [
     type: "input",
     labelWidth: 120,
     placeholder: "请输入",
-    tooltip: "请输入你的登录用户名",
+    // tooltip: "请输入你的登录用户名",
     slots: {
       append: "appendSlots",
       prefix: () => h("i", "前缀"),
@@ -499,7 +510,7 @@ const { aForm, validate } = useAForm({
   rules,
   formItems,
   modelValue: formData,
-  formConfig: { labelWidth: "120px", size: "small" },
+  formConfig: { labelWidth: "120px", size: "small"},
 });
 
 const handelClick = async () => {
