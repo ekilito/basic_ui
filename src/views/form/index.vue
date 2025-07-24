@@ -489,6 +489,7 @@ const { aForm, validate } = useAForm({
   rules,
   formItems,
   modelValue: formData,
+  formConfig: { labelWidth: "120px", size: "small" },
 });
 
 const handelClick = async () => {

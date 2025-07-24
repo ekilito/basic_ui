@@ -4,11 +4,20 @@ import aForm from "../components/form/src/index.vue";
 // props
 export const useAForm = (initialProps: Record<string, any>) => {
   const formRef = ref();
-  
+
   const reactiveProps = reactive({ ...initialProps }); // ✅ reactive props
 
-  const Component = (_, { slots }) => {
-    return h(aForm, { ...reactiveProps, ref: formRef }, slots);
+  const Component = (_: unknown, { slots }) => {
+    const { formConfig = {}, ...restProps } = reactiveProps;
+    return h(
+      aForm,
+      {
+        ...restProps,
+        ...formConfig,
+        ref: formRef,
+      },
+      slots,
+    );
   };
 
   return {
@@ -33,6 +42,7 @@ export const useAForm = (initialProps: Record<string, any>) => {
     },
     setProps: async (newProps: Partial<typeof reactiveProps>) => {
       Object.assign(reactiveProps, newProps);
-    }
+    },
   };
 };
+

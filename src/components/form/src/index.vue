@@ -1,6 +1,7 @@
 component
 <script setup lang="ts">
 import {
+  ElForm,
   ElCascader,
   ElCheckbox,
   ElCheckboxGroup,
@@ -22,6 +23,7 @@ import {
   ElRadioButton,
   ElCheckboxButton,
   type FormInstance,
+  type FormProps,
 } from "element-plus";
 import {
   type Component,
@@ -33,7 +35,7 @@ import {
   useSlots,
   useTemplateRef,
   watch,
-  reactive,
+  reactive
 } from "vue";
 import { get, omit, set } from "lodash-es";
 import { type OptionItem } from "./types/types";
@@ -42,10 +44,27 @@ import ATimerPicker from './components/ATimerPicker.vue';
 import ACoordinatePicker from './components/ACoordinatePicker.vue';
 
 // const props = defineProps(["formItems", "rules"]);
-const props = defineProps<{
-  formItems: OptionItem[];
-  rules?: Record<string, any>;
-}>();
+// const props = defineProps<{
+//   formItems: OptionItem[];
+//   rules?: Record<string, any>;
+//   formConfig: Partial<FormProps> & { model?: any }
+// }>();
+
+const props = withDefaults(
+  defineProps<{
+    formItems: OptionItem[];
+    rules?: Record<string, any>;
+    formConfig?: Partial<FormProps> 
+  }>(),
+  {
+    rules: () => ({}),
+    formConfig: () => ({
+      labelWidth: '120px',
+      labelSuffix: ":"
+    })
+  }
+);
+
 
 const formInstance = useTemplateRef<FormInstance>("formRef");
 
@@ -585,8 +604,7 @@ function getFormItemProps(item: Record<string, any>) {
     ref="formRef"
     :model="formData"
     :rules="innerRules"
-    label-width="120px"
-    label-suffix=":"
+    v-bind="formConfig"
     :validate-on-rule-change="false"
   >
     <el-row :gutter="10">
