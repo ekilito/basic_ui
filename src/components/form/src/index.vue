@@ -43,13 +43,6 @@ import AUpload from "./components/AUpload.vue";
 import ATimerPicker from "./components/ATimerPicker.vue";
 import ACoordinatePicker from "./components/ACoordinatePicker.vue";
 
-// const props = defineProps(["formItems", "rules"]);
-// const props = defineProps<{
-//   formItems: OptionItem[];
-//   rules?: Record<string, any>;
-//   formConfig: Partial<FormProps> & { model?: any }
-// }>();
-
 const props = withDefaults(
   defineProps<{
     formItems: OptionItem[];
