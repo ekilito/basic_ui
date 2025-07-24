@@ -262,7 +262,7 @@ const resolveItem = (item: any, formData: any) => {
   // 计算依赖快照（没有 deps 时为 null）
   const paramsKey = item.deps
     ? JSON.stringify(
-        item.deps.reduce((acc, depKey) => {
+        item.deps.reduce((acc: any, depKey: string) => {
           acc[depKey] = formData[depKey];
           return acc;
         }, {} as Record<string, any>)
@@ -278,7 +278,7 @@ const resolveItem = (item: any, formData: any) => {
       if (depsChanged) {
         optionsCache.delete(item.key);
         optionsPromiseCache.delete(item.key);
-        optionsParamsCache.set(item.key, paramsKey);
+        optionsParamsCache.set(item.key, paramsKey as any);
       }
     } else {
       // 没声明 deps 的，只执行一次（第一次没有缓存时执行）
