@@ -11,19 +11,23 @@ const routes: RouteRecordRaw[] = [
         path: "/",
         component: Home,
       },
-       {
+      {
         path: "/menu",
         component: () => import("../views/menu/index.vue"),
       },
-       {
+      {
         path: "/form",
         component: () => import("../views/form/index.vue"),
       },
-         {
+      {
         path: "/aFormDialog",
         component: () => import("../views/formDialog/index.vue"),
       },
-        {
+      {
+        path: "/table",
+        component: () => import("../views/table/index.vue"),
+      },
+      {
         path: "/mForm",
         component: () => import("../views/mForm/index.vue"),
       },

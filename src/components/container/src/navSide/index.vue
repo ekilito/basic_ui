@@ -18,17 +18,22 @@ const data = [
     name: "Menu",
     index: "/menu",
   },
-   {
+  {
     icon: "CreditCard",
     name: "AForm",
     index: "/form",
   },
-     {
+  {
     icon: "CreditCard",
     name: "AFormDialog",
     index: "/aFormDialog",
   },
-   {
+  {
+    icon: "CreditCard",
+    name: "ATable",
+    index: "/table",
+  },
+  {
     icon: "CreditCard",
     name: "mForm",
     index: "/mForm",
@@ -49,10 +54,7 @@ const data = [
     index: "/mars3D",
   },
 ];
-
-
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="scss"></style>
 
-</style>

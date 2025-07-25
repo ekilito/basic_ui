@@ -6,6 +6,7 @@ import menu from './menu';
 import form from './form';
 import mForm from './mForm';
 import aFormDialog from './formDialog'
+import aTable from './table'
 
 
 const components = [
@@ -14,7 +15,8 @@ const components = [
   menu,
   form,
   mForm,
-  aFormDialog
+  aFormDialog,
+  aTable
 ]
 
 export default {
