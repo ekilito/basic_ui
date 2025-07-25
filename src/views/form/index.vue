@@ -136,7 +136,7 @@ const formItems = computed<OptionItem[]>(() => [
     type: "input",
     labelWidth: 120,
     placeholder: "请输入",
-    // tooltip: "请输入你的登录用户名",
+    tooltip: "请输入你的登录用户名",
     slots: {
       append: "appendSlots",
       prefix: () => h("i", "前缀"),
