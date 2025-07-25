@@ -123,7 +123,7 @@ const formItems = computed<OptionItem[]>(() => [
     label: '',
     key: "lineList",
     type: "ADrawPath",
-    labelWidth: '48px',
+    labelWidth: '32px',
     onChange: (positions: any) => {
       console.log('positions:', positions)
       console.log('formData.lineList', formData.value.lineList)
