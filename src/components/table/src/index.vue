@@ -1,5 +1,9 @@
 <template>
-  <div>table</div>
+  <el-table :data="data">
+    <template v-for="(item,index) in options" :key="index">
+      <el-table-column :label="item.label" :prop="item.prop" :align="item.align" :width="item.width"></el-table-column>
+    </template>
+  </el-table>
 </template>
 
 <script lang="ts" setup>
