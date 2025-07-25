@@ -42,7 +42,7 @@ import { type OptionItem } from "./types/types";
 import AUpload from "./components/AUpload.vue";
 import ATimerPicker from "./components/ATimerPicker.vue";
 import ACoordinatePicker from "./components/ACoordinatePicker.vue";
-import ADrawPath from './components/ADrawPath.vue';
+import ADrawPath from "./components/ADrawPath.vue";
 
 const props = withDefaults(
   defineProps<{
@@ -54,7 +54,7 @@ const props = withDefaults(
     rules: () => ({}),
     formConfig: () => ({
       labelWidth: "120px",
-      labelSuffix: ":"
+      labelSuffix: ":",
     }),
   },
 );
@@ -612,17 +612,18 @@ function getFormItemProps(item: Record<string, any>) {
 
         <template v-else>
           <el-form-item :label="item.label" :prop="item.key" v-bind="getFormItemProps(item)">
-         <template #label>
-  <span style="display: inline-flex; align-items: center; gap: 4px">
-    <span>{{ item.label }}<span v-if="formConfig?.labelSuffix">{{ formConfig.labelSuffix }}</span></span>
-    <el-tooltip v-if="item.tooltip" :content="item.tooltip" placement="top" effect="dark">
-      <el-icon style="cursor: pointer">
-        <QuestionFilled />
-      </el-icon>
-    </el-tooltip>
-  </span>
-</template>
-
+            <template #label>
+              <span style="display: inline-flex; align-items: center; gap: 4px">
+                <span
+                  >{{ item.label }}<span v-if="formConfig?.labelSuffix">{{ formConfig.labelSuffix }}</span></span
+                >
+                <el-tooltip v-if="item.tooltip" :content="item.tooltip" placement="top" effect="dark">
+                  <el-icon style="cursor: pointer">
+                    <QuestionFilled />
+                  </el-icon>
+                </el-tooltip>
+              </span>
+            </template>
 
             <slot :name="item.key">
               <div class="form-item">
