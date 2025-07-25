@@ -87,7 +87,7 @@ watch(
     display: flex;
     margin-bottom: 16px;
     .coord-header {
-      min-width: 86px;
+      min-width: 72px;
       color: #606266;
     }
     .coord-inputs {

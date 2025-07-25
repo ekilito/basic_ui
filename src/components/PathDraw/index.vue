@@ -1,6 +1,6 @@
 <script setup>
 import { nextTick, ref } from "vue";
-import { loadMap, pathGraphicLayer } from "./map";
+import { loadMap, pathGraphicLayer , destroyMap} from "./map";
 import * as mars3d from "mars3d";
 import { ElMessage } from "element-plus";
 
@@ -10,6 +10,7 @@ let curGraphicPath = null;
 const emits = defineEmits(["DrawPath"]);
 
 const openDialog = async (positions = [], equip = null) => {
+  destroyMap()
   dialogVisible.value = true;
   await nextTick(async () => {
     await loadMap("path-draw-map");

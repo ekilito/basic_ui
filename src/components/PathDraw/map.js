@@ -13,3 +13,12 @@ export let loadMap = async (id) => {
 
   await map.addLayer(pathGraphicLayer);
 };
+
+export function destroyMap() {
+  if (map) {
+    map.destroy();
+    map = null;
+    pathGraphicLayer = null;
+ 
+  }
+}
