@@ -23,6 +23,11 @@ const data = [
     name: "AForm",
     index: "/form",
   },
+     {
+    icon: "CreditCard",
+    name: "AFormDialog",
+    index: "/aFormDialog",
+  },
    {
     icon: "CreditCard",
     name: "mForm",

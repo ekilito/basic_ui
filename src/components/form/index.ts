@@ -4,6 +4,6 @@ import aForm from './src/index.vue';
 
 export default {
   install(app: App) {
-    app.component('AForm', aForm);
+    app.component('a-form', aForm);
   }
 };
