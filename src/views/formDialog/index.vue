@@ -3,7 +3,7 @@
     <el-button type="primary" @click="handleOpen">open</el-button>
     <a-form-dialog v-model:visible="visible" :formItems="formItems" :formData="formData" title="编辑用户" width="48%">
       <template #footer="{ form }">
-        <el-button @click="handleCancel">cancel</el-button>
+        <el-button @click="handleCancel(form)">cancel</el-button>
         <el-button @click="handleOK(form)" type="primary">OK</el-button>
       </template>
     </a-form-dialog>
@@ -31,8 +31,9 @@ const handleOpen = () => {
   visible.value = true;
 };
 
-const handleCancel = () => {
+const handleCancel = (form) => {
   visible.value = false;
+  form.resetFields()
 };
 
 const handleOK = (form) => {
