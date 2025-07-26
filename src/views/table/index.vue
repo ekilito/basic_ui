@@ -1,5 +1,5 @@
 <template>
-  <a-table :data="tableData" :options="options" @check="handleCheck" @close="handleClose" editIcon="Edit">
+  <a-table :data="tableData" :options="options" @confirm="handleCheck" @cancel="handleClose" editIcon="Edit">
     <template #dateSlot="{ row }"> {{ row.date }} slot </template>
     <template #action="{ row }">
       <el-button size="small" type="primary" @click="handleEdit(row)">编辑</el-button>

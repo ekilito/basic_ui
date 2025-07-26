@@ -88,7 +88,7 @@ const actionOptions = computed(() => props.options.find((item) => item.action));
 // 表格是否在加载中
 const isLoading = computed(() => !props.data || !props.data.length);
 
-const emits = defineEmits(["check", "close"]);
+const emits = defineEmits(["confirm", "cancel"]);
 
 // 当前点击的单元格
 const currentEdit = ref<string>("");
@@ -103,12 +103,12 @@ const clickEdit = (scope: any) => {
 
 const checkClick = (scope: any) => {
   currentEdit.value = "";
-  emits("check", scope.row);
+  emits("confirm", scope.row);
 };
 
 const closeClick = (scope: any) => {
   currentEdit.value = "";
-  emits("close", scope.row);
+  emits("cancel", scope.row);
 };
 </script>
 
