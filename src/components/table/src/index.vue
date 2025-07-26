@@ -1,6 +1,6 @@
 <template>
   <el-table
-    :data="data"
+    :data="tableData"
     v-loading="isLoading"
     :element-loading-text="elementLoadingText"
     :element-loading-spinner="elementLoadingSpinner"
@@ -8,11 +8,16 @@
     :element-loading-svg-view-box="elementLoadingSvgViewBox"
     :element-loading-background="elementLoadingBackground"
     :element-loading-custom-class="elementLoadingCustomClass"
+    @row-click="rowClick"
   >
     <template v-for="(item, index) in tableOptions" :key="index">
       <el-table-column :label="item.label" :prop="item.prop" :align="item.align" :width="item.width">
         <template #default="scope">
-          <template v-if="scope.$index + scope.column.id === currentEdit">
+          <template v-if="scope.row.isEditRow">
+            <el-input size="small" v-model="scope.row[item.prop!]"></el-input>
+          </template>
+           <template v-else>
+            <template v-if="scope.$index + scope.column.id === currentEdit">
             <div class="edit-box">
               <el-input size="small" v-model="scope.row[item.prop!]"></el-input>
               <div @click="handleEditCell">
@@ -30,20 +35,23 @@
             <!-- <el-icon v-if="item.editable" class="edit-icon" @click="clickEdit(scope)"><Edit /></el-icon> -->
             <component :is="editIcon" v-if="item.editable" class="edit-icon" @click="clickEdit(scope)"></component>
           </template>
+           </template>
         </template>
       </el-table-column>
     </template>
     <el-table-column :label="actionOptions!.label" :align="actionOptions!.align" :width="actionOptions!.width">
       <template #default="scope">
-        <slot name="action" v-bind="scope"></slot>
+        <slot name="editRow" v-if="scope.row.isEditRow" v-bind="scope"></slot>
+        <slot name="action" v-bind="scope" v-else></slot>
       </template>
     </el-table-column>
   </el-table>
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, type PropType } from "vue";
+import { computed, onMounted, ref, watch, type PropType } from "vue";
 import type { TableOptions } from "./types";
+import { cloneDeep } from "lodash-es";
 
 const props = defineProps({
   options: {
@@ -54,6 +62,7 @@ const props = defineProps({
     type: Array as PropType<any[]>,
     required: true,
   },
+  // loading
   elementLoadingText: {
     type: String,
   },
@@ -77,6 +86,16 @@ const props = defineProps({
     type: String,
     default: "Edit",
   },
+  // 是否可以编辑行
+  isEditRow: {
+    type: Boolean,
+    default: false,
+  },
+  // 编辑行按钮的标识
+  editRowIndex: {
+    type: String,
+    default: "",
+  },
 });
 
 // 过滤操作选项
@@ -93,9 +112,23 @@ const emits = defineEmits(["confirm", "cancel"]);
 // 当前点击的单元格
 const currentEdit = ref<string>("");
 
-const handleEditCell = () => {
-  // currentEdit.value = "";
-}
+const tableData = ref<any[]>(cloneDeep(props.data));
+const cloneEditRowIndex = ref<string>(props.editRowIndex);
+
+const rowClick = (row: any, column: any) => {
+  // 判断点击是否操作项
+  if (column.label === actionOptions.value!.label) {
+    // 编辑行的操作
+    if (props.isEditRow && cloneEditRowIndex.value === props.editRowIndex) {
+      // 可编辑的操作
+      row.isEditRow = !row.isEditRow;
+      // 重置其它数据的 isEditRow
+      tableData.value.map((item) => {
+        if (item !== row) item.isEditRow = false;
+      });
+    }
+  }
+};
 
 const clickEdit = (scope: any) => {
   currentEdit.value = scope.$index + scope.column.id; // 唯一标识
@@ -110,6 +143,35 @@ const closeClick = (scope: any) => {
   currentEdit.value = "";
   emits("cancel", scope.row);
 };
+
+const handleEditCell = () => {};
+
+// 监听父组件传递的data数据
+watch(
+  () => props.data,
+  (val) => {
+    tableData.value = cloneDeep(val);
+    tableData.value.map((item) => {
+      item.rowEdit = false;
+    });
+  },
+  { deep: true },
+);
+
+// 监听父组件传递的标识
+watch(
+  () => props.editRowIndex,
+  (val) => {
+    if (val) cloneEditRowIndex.value = val;
+  },
+);
+
+onMounted(() => {
+  tableData.value.map((item) => {
+    // 代表当前是否是可编辑的状态
+    item.rowEdit = false;
+  });
+});
 </script>
 
 <style lang="scss" scoped>
