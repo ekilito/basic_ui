@@ -6,7 +6,7 @@
     @cancel="handleClose"
     editIcon="Edit"
     isEditRow
-    :editRowIndex="editRowIndex"
+    v-model:editRowIndex="editRowIndex"
   >
     <template #dateSlot="{ row }"> {{ row.date }} slot </template>
     <template #editRow="{row}">
@@ -14,7 +14,7 @@
       <el-button size="small"  @click="handleCancel">取消</el-button>
     </template>
     <template #action="{ row }">
-      <el-button size="small" type="primary" @click="handleEditRow(row)">可编辑行</el-button>
+      <el-button size="small" type="primary" @click="handleEditRow">可编辑行</el-button>
       <el-button size="small" type="primary" @click="handleEdit(row)">编辑</el-button>
       <el-button size="small" type="danger" @click="handleDel">删除</el-button>
     </template>
@@ -78,29 +78,31 @@ const options: TableOptions[] = [
 ];
 
 const handleEdit = (row: any) => {
-  console.log(row);
+  console.log('编辑',row);
 };
 
-const handleDel = () => {};
+const handleDel = () => {
+  console.log('删除')
+};
 
 const handleCheck = (row: any) => {
-  console.log(row);
+  console.log('可编辑单元格 ok',row);
 };
 
 const handleClose = (row: any) => {
-  console.log(row);
+  console.log('可编辑单元格 close',row);
 };
 
-const handleEditRow = (row: any) => {
+const handleEditRow = ( ) => {
   editRowIndex.value = 'edit'
 };
 
 const handleOK = (row: any) => {
-
+  console.log('可编辑行 确定', row)
 }
 
 const handleCancel = () => {
-
+ console.log('可编辑行 取消')
 }
 </script>
 
