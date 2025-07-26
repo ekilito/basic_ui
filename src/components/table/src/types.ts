@@ -24,4 +24,6 @@ export interface TableOptions {
   slot?: string
   // 是否代表操作项
   action?: boolean
+  // 是否是可编辑单元格
+  editable?: boolean
 }
