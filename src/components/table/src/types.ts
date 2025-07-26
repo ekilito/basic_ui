@@ -22,4 +22,6 @@ export interface TableOptions {
   filters?: Array<{text: string, value: string}>,
   
   slot?: string
+  // 是否代表操作项
+  action?: boolean
 }
