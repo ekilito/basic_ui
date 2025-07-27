@@ -16,7 +16,7 @@ const baseConfig = defineConfig({
 });
 
 // rollup配置
-const rollOptions = {
+const rollupOptions = {
   external: ["vue", "vue-router"],
   output: {
     globals: {
