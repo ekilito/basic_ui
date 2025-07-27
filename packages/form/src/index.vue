@@ -158,7 +158,7 @@ const componentMap: Record<string, any> = {
   AUpload: AUpload,
   ATimerPicker: ATimerPicker,
   ACoordinatePicker,
-  // ADrawPath, 
+  // ADrawPath,
 
   // mySelect: MySelect
   // 异步导入
@@ -612,7 +612,8 @@ function getFormItemProps(item: Record<string, any>) {
 
         <template v-else>
           <el-form-item :label="item.label" :prop="item.key" v-bind="getFormItemProps(item)">
-            <template #label>
+            <!-- 打包影响  formConfig-->
+            <!-- <template #label>
               <span style="display: inline-flex; align-items: center; gap: 4px">
                 <span
                   >{{ item.label }}<span v-if="formConfig?.labelSuffix && item.type !== 'ADrawPath'">{{ formConfig.labelSuffix }}</span></span
@@ -623,7 +624,7 @@ function getFormItemProps(item: Record<string, any>) {
                   </el-icon>
                 </el-tooltip>
               </span>
-            </template>
+            </template> -->
 
             <slot :name="item.key">
               <div class="form-item">
@@ -685,8 +686,8 @@ function getFormItemProps(item: Record<string, any>) {
   // color: #60d4f7;
   font-size: 16px;
   font-weight: bold;
- // background: url("./assets/header.png");
- // background-size: 100% 100%;
+  // background: url("./assets/header.png");
+  // background-size: 100% 100%;
   margin: 0 auto;
 }
 </style>

@@ -12,6 +12,8 @@
     "ts",
     "form",
     "table",
-    "formDialog"
+    "formDialog",
+    "wdl-aura-ui",
+    "wdl"
   ]
 }

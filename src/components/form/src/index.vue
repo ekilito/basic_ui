@@ -611,7 +611,8 @@ function getFormItemProps(item: Record<string, any>) {
 
         <template v-else>
           <el-form-item :label="item.label" :prop="item.key" v-bind="getFormItemProps(item)">
-            <template #label>
+            <!-- 打包影响  formConfig-->
+            <!-- <template #label>
               <span style="display: inline-flex; align-items: center; gap: 4px">
                 <span
                   >{{ item.label }}<span v-if="formConfig?.labelSuffix && item.type !== 'ADrawPath'">{{ formConfig.labelSuffix }}</span></span
@@ -622,7 +623,7 @@ function getFormItemProps(item: Record<string, any>) {
                   </el-icon>
                 </el-tooltip>
               </span>
-            </template>
+            </template> -->
 
             <slot :name="item.key">
               <div class="form-item">
