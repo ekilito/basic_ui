@@ -1,5 +1,5 @@
 {
-  "name": "aura-ui",
+  "name": "wdl-aura-ui",
   "version": "1.0.0",
   "main": "index.umd.js",
   "module": "index.js",
@@ -11,8 +11,7 @@
     "element-plus",
     "ts",
     "动态表单",
-    "封装组件",
-    "二次封装",
-    "wudalong"
+    "动态表格",
+    "二次封装"
   ]
 }
