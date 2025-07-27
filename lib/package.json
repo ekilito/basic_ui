@@ -1,6 +1,6 @@
 {
   "name": "wdl-aura-ui",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "index.umd.js",
   "module": "index.js",
   "types": "index.d.ts",
@@ -10,8 +10,8 @@
   "keywords": [
     "element-plus",
     "ts",
-    "动态表单",
-    "动态表格",
-    "二次封装"
+    "form",
+    "table",
+    "formDialog"
   ]
 }

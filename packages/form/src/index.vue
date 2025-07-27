@@ -685,8 +685,8 @@ function getFormItemProps(item: Record<string, any>) {
   // color: #60d4f7;
   font-size: 16px;
   font-weight: bold;
-  background: url("./assets/header.png");
-  background-size: 100% 100%;
+ // background: url("./assets/header.png");
+ // background-size: 100% 100%;
   margin: 0 auto;
 }
 </style>
