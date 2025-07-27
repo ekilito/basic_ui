@@ -18,7 +18,7 @@
 <script lang="ts" setup>
 import {ref,watch} from 'vue'
 import * as ELIcons from '@element-plus/icons-vue'
-import { useCopy } from '../../../hooks/useCopy';
+import { useCopy } from '../../hooks/useCopy';
 
 const props = defineProps<{
   visible: boolean,

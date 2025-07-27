@@ -1,12 +1,14 @@
 {
   "name": "aura-ui",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc -b && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "build:components": "node ./command/build.js",
+    "lib": "npm run build:components"
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.1",

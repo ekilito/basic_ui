@@ -25,7 +25,7 @@
 
 <script setup>
 import { ref, watch } from "vue";
-import pathDraw from "../../../PathDraw/index.vue";
+import pathDraw from "./PathDraw/index.vue";
 
 const props = defineProps({
   modelValue: {
