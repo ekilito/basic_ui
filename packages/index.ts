@@ -14,12 +14,13 @@ const components = [chooseArea, chooseIcon, menu, form, mForm, aFormDialog, aTab
 
 export default {
   install(app: App) {
+    // 全局注册图标
+    for (const [key, component] of Object.entries(AIcons)) {
+      app.component(key, component);
+    }
     components.map((item) => {
-      // 全局注册图标
-      for (const [key, component] of Object.entries(AIcons)) {
-        app.component(key, component);
-      }
       app.use(item);
     });
   },
 };
+
