@@ -1,0 +1,7 @@
+
+  {
+   "name": "formDialog",
+   "main": "index.umd.js",
+   "module": "index.es.js",
+   "style": "aura-ui.css"
+  }
