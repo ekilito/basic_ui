@@ -44,20 +44,11 @@ import ATimerPicker from "./components/ATimerPicker.vue";
 import ACoordinatePicker from "./components/ACoordinatePicker.vue";
 import ADrawPath from "./components/ADrawPath.vue";
 
-const props = withDefaults(
-  defineProps<{
-    formItems: OptionItem[];
-    rules?: Record<string, any>;
-    formConfig?: Partial<FormProps>;
-  }>(),
-  {
-    rules: () => ({}),
-    formConfig: () => ({
-      labelWidth: "120px",
-      labelSuffix: ":",
-    }),
-  },
-);
+const props = defineProps<{
+  formItems: OptionItem[];
+  rules?: Record<string, any>;
+  formConfig?: Partial<FormProps>;
+}>();
 
 const formInstance = useTemplateRef<FormInstance>("formRef");
 
@@ -603,7 +594,7 @@ function getFormItemProps(item: Record<string, any>) {
 </script>
 
 <template>
-  <el-form ref="formRef" :model="formData" :rules="innerRules" v-bind="formConfig" :validate-on-rule-change="false">
+  <el-form ref="formRef" :model="formData" :rules="innerRules" v-bind="formConfig" :validate-on-rule-change="false" labelSuffix="：">
     <el-row :gutter="10">
       <el-col v-for="(item, index) in items" :key="item.key || item.type + index" :span="item.span || 24">
         <template v-if="item.type === 'title'">

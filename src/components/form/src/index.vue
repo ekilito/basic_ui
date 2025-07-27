@@ -44,20 +44,26 @@ import ATimerPicker from "./components/ATimerPicker.vue";
 import ACoordinatePicker from "./components/ACoordinatePicker.vue";
 import ADrawPath from "./components/ADrawPath.vue";
 
-const props = withDefaults(
-  defineProps<{
-    formItems: OptionItem[];
-    rules?: Record<string, any>;
-    formConfig?: Partial<FormProps>;
-  }>(),
-  {
-    rules: () => ({}),
-    formConfig: () => ({
-      labelWidth: "120px",
-      labelSuffix: ":",
-    }),
-  },
-);
+// const props = withDefaults(
+//   defineProps<{
+//     formItems: OptionItem[];
+//     rules?: Record<string, any>;
+//     formConfig?: Partial<FormProps>;
+//   }>(),
+//   {
+//     rules: () => ({}),
+//     formConfig: () => ({
+//       labelWidth: "120px",
+//       labelSuffix: ":",
+//     }),
+//   },
+// );
+
+const props = defineProps<{
+  formItems: OptionItem[];
+  rules?: Record<string, any>;
+  formConfig?: Partial<FormProps>;
+}>();
 
 const formInstance = useTemplateRef<FormInstance>("formRef");
 
@@ -602,7 +608,7 @@ function getFormItemProps(item: Record<string, any>) {
 </script>
 
 <template>
-  <el-form ref="formRef" :model="formData" :rules="innerRules" v-bind="formConfig" :validate-on-rule-change="false">
+  <el-form ref="formRef" :model="formData" :rules="innerRules" v-bind="formConfig" :validate-on-rule-change="false" labelSuffix=":">
     <el-row :gutter="10">
       <el-col v-for="(item, index) in items" :key="item.key || item.type + index" :span="item.span || 24">
         <template v-if="item.type === 'title'">
@@ -611,19 +617,6 @@ function getFormItemProps(item: Record<string, any>) {
 
         <template v-else>
           <el-form-item :label="item.label" :prop="item.key" v-bind="getFormItemProps(item)">
-            <!-- 打包影响  formConfig-->
-            <!-- <template #label>
-              <span style="display: inline-flex; align-items: center; gap: 4px">
-                <span
-                  >{{ item.label }}<span v-if="formConfig?.labelSuffix && item.type !== 'ADrawPath'">{{ formConfig.labelSuffix }}</span></span
-                >
-                <el-tooltip v-if="item.tooltip" :content="item.tooltip" placement="top" effect="dark">
-                  <el-icon style="cursor: pointer">
-                    <QuestionFilled />
-                  </el-icon>
-                </el-tooltip>
-              </span>
-            </template> -->
 
             <slot :name="item.key">
               <div class="form-item">
