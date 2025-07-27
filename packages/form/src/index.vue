@@ -158,7 +158,8 @@ const componentMap: Record<string, any> = {
   AUpload: AUpload,
   ATimerPicker: ATimerPicker,
   ACoordinatePicker,
-  ADrawPath,
+  // ADrawPath, 
+
   // mySelect: MySelect
   // 异步导入
   // mySelect: defineAsyncComponent(() => {

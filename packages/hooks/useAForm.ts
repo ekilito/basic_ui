@@ -1,5 +1,5 @@
 import { h, reactive, ref } from "vue";
-import aForm from "../components/form/src/index.vue";
+import aForm from "../form/src/index.vue";
 
 // props
 export const useAForm = (initialProps: Record<string, any>) => {
