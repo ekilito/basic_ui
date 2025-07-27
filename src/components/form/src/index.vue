@@ -159,16 +159,15 @@ const componentMap: Record<string, any> = {
   ATimerPicker: ATimerPicker,
   ACoordinatePicker,
   ADrawPath,
-
   // mySelect: MySelect
   // 异步导入
-  mySelect: defineAsyncComponent(() => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        import("./components/MySelect.vue").then((comp) => resolve(comp.default)); // 支持远程加载组件
-      }, 500);
-    });
-  }),
+  // mySelect: defineAsyncComponent(() => {
+  //   return new Promise((resolve) => {
+  //     setTimeout(() => {
+  //       import("./components/MySelect.vue").then((comp) => resolve(comp.default)); // 支持远程加载组件
+  //     }, 500);
+  //   });
+  // }),
 };
 
 const rootProps = ["label", "key", "type", "span", "unit", "trim", "hidden", "if", "defaultValue"];
