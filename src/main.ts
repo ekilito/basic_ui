@@ -9,8 +9,12 @@ import 'element-plus/dist/index.css'
 import * as AIcons from '@element-plus/icons-vue'
 
 import aUI from './components/index.ts'
-// import aUI from '../dist/aura-ui'
-// import '../dist/aura-ui.css'
+// import aUI from '../lib/aura-ui'
+// import '../lib/aura-ui.css'
+
+// 单独引入组件
+// import aForm from '../lib/form/index.es.js'
+// import  '../lib/form/aura-ui.css'
 
 const app = createApp(App)
 
