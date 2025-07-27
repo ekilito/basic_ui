@@ -15,14 +15,6 @@ const cOptions = computed(() => {
 const getOptions = (code: any) => {
    // await getOptionsApi()
    console.log(code)
-   setTimeout(() => {
-     options.value = [
-       { name: "男", id: 1 },
-       { name: "女", id: 2 },
-     ]
-
-     console.log(props.formData)
-   },2000)
 }
 
 watch(()=> props.code, (newVal)=> {

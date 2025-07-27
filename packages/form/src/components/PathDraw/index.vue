@@ -130,7 +130,7 @@ defineExpose({
   right: 20px;
   z-index: 2;
   cursor: pointer;
-  background: url("../form/src/assets/title.png") no-repeat;
+  background: url("../../assets/title.png") no-repeat;
   background-size: 100% 100%;
   display: flex;
   justify-content: center;

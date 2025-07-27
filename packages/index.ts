@@ -7,7 +7,7 @@ import form from './form';
 import mForm from './mForm';
 import aFormDialog from './formDialog'
 import aTable from './table'
-import './styles/base'
+import './styles/base.css'
 
 
 
