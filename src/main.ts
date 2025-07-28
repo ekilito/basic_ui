@@ -8,9 +8,9 @@ import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import * as AIcons from '@element-plus/icons-vue'
 
-import aUI from './components/index.ts'
-// import aUI from '../lib'
-// import '../lib/aura-ui.css'
+// import aUI from './components/index.ts'
+import aUI from '../lib/index.js'
+import '../lib/index.css'
 
 // 单独引入组件
 // import aForm from '../lib/form/index.es.js'

@@ -1,25 +1,23 @@
 <template>
   <div class="app-page">
-    <a-form>
+    <a-form :rules="rules" :formItems="formItems" :modelValue="formData" :formConfig="{ labelWidth: '120px', size: 'small'}" >
       <template #appendSlots>input append slot</template>
       <template #footerSlots>select footer slot</template>
       <template #suffixSlots> RMB </template>
       <template #keySlot>keySlot</template>
       <template #action>
-        <el-button @click="handelClick" type="primary">提交</el-button>
+        <el-button  type="primary">提交</el-button>
       </template>
     </a-form>
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang="js">
 import { ref, computed, h } from "vue";
-import { useAForm } from "../../hooks/useAForm.ts";
-import { type OptionItem } from "../../components/form/src/types/types.ts";
 import { ElMessage } from "element-plus";
-import { validatePosition } from "../../utils/index.ts";
 
-const formData = ref<any>({
+
+const formData = ref({
   data: {
     input: "",
   },
@@ -65,7 +63,7 @@ const options1 = ref([
   { label: "ces3", value: "3" },
 ]);
 
-const formItems = computed<OptionItem[]>(() => [
+const formItems = computed(() => [
   {
     label: "AForm",
     type: "title",
@@ -75,6 +73,7 @@ const formItems = computed<OptionItem[]>(() => [
     label: "同步()=>{[]}",
     key: "sync_test1",
     type: "select",
+   
     options: () => {
       console.log("同步()=>{[]}");
       return [
@@ -88,11 +87,12 @@ const formItems = computed<OptionItem[]>(() => [
     label: "api异步",
     key: "async_test2",
     type: "select",
+   
     options: async () => {
       console.log("api异步async");
       const response = await fetch("https://jsonplaceholder.typicode.com/users");
       const users = await response.json();
-      return users.map((user: any) => ({
+      return users.map((user) => ({
         label: user.name,
         value: user.id,
       }));
@@ -104,12 +104,13 @@ const formItems = computed<OptionItem[]>(() => [
     key: "async_test1",
     type: "select",
     deps: ["sync_test1"],
-    options: async (formData: any) => {
+  
+    options: async (formData) => {
       console.log("select条件异步");
       if (formData.sync_test1 == 1) {
         const response = await fetch("https://jsonplaceholder.typicode.com/users");
         const users = await response.json();
-        return users.map((user: any) => ({
+        return users.map((user) => ({
           label: user.name,
           value: user.id,
         }));
@@ -119,24 +120,15 @@ const formItems = computed<OptionItem[]>(() => [
       return [];
     },
   },
-  {
-    label: '',
-    key: "lineList",
-    type: "ADrawPath",
-    labelWidth: '32px',
-    onChange: (positions: any) => {
-      console.log('positions:', positions)
-      console.log('formData.lineList', formData.value.lineList)
-    }
-  },
+ 
 
   {
     label: "姓名",
     key: "data.input",
     type: "input",
-    labelWidth: 120,
+   
     placeholder: "请输入",
-    // tooltip: "请输入你的登录用户名",
+    tooltip: "请输入你的登录用户名",
     slots: {
       append: "appendSlots",
       prefix: () => h("i", "前缀"),
@@ -158,10 +150,11 @@ const formItems = computed<OptionItem[]>(() => [
     required: true,
     span: 24,
     filterable: true,
+  
     options: options1.value,
     appendButton: {
       text: "操作",
-      onClick: (item: any, formModel: any) => {
+      onClick: (item, formModel) => {
         console.log("当前项：", item);
         console.log("当前表单数据：", formModel);
         formModel.number = 100;
@@ -169,12 +162,12 @@ const formItems = computed<OptionItem[]>(() => [
       },
     },
     slots: {
-      label: ({ label, value }: { label: string; value: any }) =>
+      label: ({ label, value }) =>
         h("span", [h("span", `${label}: `), h("span", { style: { fontWeight: "bold" } }, value)]),
 
       footer: "footerSlots",
     },
-    onChange: (e: any) => {
+    onChange: (e) => {
       if (e == 1) {
         formData.value.data.input = "input";
       }
@@ -186,6 +179,7 @@ const formItems = computed<OptionItem[]>(() => [
     key: "password",
     type: "password",
     clearable: true,
+  
     placeholder: "请输入",
   },
   {
@@ -197,6 +191,7 @@ const formItems = computed<OptionItem[]>(() => [
     placeholder: "请输入",
     controls: false,
     defaultValue: 20,
+   
     disabled: (formData) => formData.password == 123,
     rules: [{ required: true, message: "请输入数字", trigger: "blur" }],
   },
@@ -207,6 +202,7 @@ const formItems = computed<OptionItem[]>(() => [
     placeholder: "请输入",
     precision: 2,
     step: 0.1,
+   
     slots: {
       prefix: () => h("span", {}, "￥"),
       suffix: "suffixSlots",
@@ -219,6 +215,7 @@ const formItems = computed<OptionItem[]>(() => [
     placeholder: "请输入",
     resize: "none",
     required: true,
+   
   },
   {
     label: "时间",
@@ -230,11 +227,13 @@ const formItems = computed<OptionItem[]>(() => [
     style: {
       width: "100%",
     },
+    
   },
   {
     label: "treeSelect",
     key: "treeSelect",
     type: "treeSelect",
+   
     // treeSelect 多包一层props（如果传了props格式化data字段， 需要包一层props）
     props: {
       placeholder: "请选择",
@@ -256,7 +255,7 @@ const formItems = computed<OptionItem[]>(() => [
           ],
         },
       ],
-      onNodeClick: (e: any) => {
+      onNodeClick: (e) => {
         console.log(e);
       },
       props: {
@@ -271,8 +270,9 @@ const formItems = computed<OptionItem[]>(() => [
     key: "city",
     type: "select",
     placeholder: "please select",
+   
     deps: ["select"],
-    options: (formData: any) => {
+    options: (formData) => {
       if (formData.select == "1") return [{ label: "海淀", value: "1" }];
       if (formData.select == "2")
         return [
@@ -290,6 +290,7 @@ const formItems = computed<OptionItem[]>(() => [
     placeholder: "请选择",
     required: true,
     span: 24,
+   
     options: [
       { name: "男", id: 1 },
       { name: "女", id: 2 },
@@ -298,7 +299,7 @@ const formItems = computed<OptionItem[]>(() => [
       label: "name",
       value: "id",
     },
-    onChange: (value: any) => {
+    onChange: (value) => {
       console.log(value, formData.value);
     },
     slots: {
@@ -311,6 +312,7 @@ const formItems = computed<OptionItem[]>(() => [
     key: "jd",
     type: "input",
     placeholder: "请输入街道",
+  
     disabled: (formData) => !formData.city, // 没有选择城市就禁用
   },
   {
@@ -318,7 +320,8 @@ const formItems = computed<OptionItem[]>(() => [
     key: "file",
     type: "AUpload",
     accept: ".png,.pdf",
-    onChange: async (e: any) => {
+   
+    onChange: async (e) => {
       console.log("开始上传文件...", e);
       // 模拟异步等待（如上传耗时）
       await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -332,14 +335,16 @@ const formItems = computed<OptionItem[]>(() => [
     label: "开始时间",
     key: "startTimes",
     type: "ATimerPicker",
+   
     rules: [{ required: true, message: "ATimerPicker", trigger: "blur" }],
   },
   {
     label: "经纬度坐标",
     key: "position",
     type: "ACoordinatePicker",
+   
     disabled: true,
-    onChange: (e: any) => {
+    onChange: (e) => {
       console.log(e);
     },
     rules: [
@@ -348,16 +353,17 @@ const formItems = computed<OptionItem[]>(() => [
         message: "请选择经纬度坐标",
         trigger: "change",
       },
-      {
-        validator: validatePosition,
-        trigger: "change",
-      },
+      // {
+      //   validator: validatePosition,
+      //   trigger: "change",
+      // },
     ],
   },
   {
     label: "switch",
     key: "switch",
     type: "switch",
+   
     style: "--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949",
     inlinePrompt: true,
     activeText: "是",
@@ -367,12 +373,13 @@ const formItems = computed<OptionItem[]>(() => [
     label: "radioGroup",
     key: "radioGroup",
     type: "radioGroup",
+   
     for: "", // 禁用 label 关联
     options: [
       { label: "radio1", value: 1 },
       { label: "radio2", value: 2 },
     ],
-    onChange: (e: any) => {
+    onChange: (e) => {
       console.log(e);
     },
   },
@@ -380,6 +387,7 @@ const formItems = computed<OptionItem[]>(() => [
     label: "radioGroupButton",
     key: "radioGroupButton",
     type: "radioGroupButton",
+   
     for: "", // 禁用 label 关联
     options: () => {
       return [
@@ -393,6 +401,7 @@ const formItems = computed<OptionItem[]>(() => [
     label: "checkboxGroup",
     key: "checkboxGroup",
     type: "checkboxGroup",
+   
     for: "",
     options: [
       { label: "box1", value: 1 },
@@ -404,6 +413,7 @@ const formItems = computed<OptionItem[]>(() => [
     label: "checkboxGroupButton",
     key: "checkboxGroupButton",
     type: "checkboxGroupButton",
+   
     for: "",
     options: [
       { label: "box1", value: 1 },
@@ -417,12 +427,14 @@ const formItems = computed<OptionItem[]>(() => [
     key: "startTime",
     type: "time",
     placeholder: "请输入时间",
+    
     if: (formData) => formData.switch === true,
   },
   {
     label: "timeRange",
     key: "timeRange",
     type: "timeRange",
+  
     rangeSeparator: "To",
     startPlaceholder: "Start time",
     endPlaceholder: "End time",
@@ -434,6 +446,7 @@ const formItems = computed<OptionItem[]>(() => [
     key: "rate",
     type: "rate",
     for: "",
+   
     if: (formData) => formData.switch === true,
   },
   {
@@ -441,6 +454,7 @@ const formItems = computed<OptionItem[]>(() => [
     key: "color",
     type: "color",
     for: "",
+   
     if: (formData) => formData.switch === true,
   },
   {
@@ -448,6 +462,8 @@ const formItems = computed<OptionItem[]>(() => [
     key: "slider",
     type: "slider",
     for: "",
+    labelWidth: '120px',
+    labelPosition:'right',
     if: (formData) => formData.switch === true,
   },
 
@@ -455,6 +471,7 @@ const formItems = computed<OptionItem[]>(() => [
     label: "cascader",
     key: "cascader",
     type: "cascader",
+   
     // 如果传了props格式化字段，需要包一层props
     props: {
       placeholder: "please select",
@@ -490,6 +507,7 @@ const formItems = computed<OptionItem[]>(() => [
     label: "transfer",
     key: "transfer",
     type: "transfer",
+    
     data: [
       { key: 1, label: "Option 1", disabled: false },
       { key: 2, label: "Option 2", disabled: false },
@@ -506,21 +524,15 @@ const formItems = computed<OptionItem[]>(() => [
 
 const rules = {};
 
-const { aForm, validate } = useAForm({
-  rules,
-  formItems,
-  modelValue: formData,
-  formConfig: { labelWidth: "120px", size: "small", labelSuffix: ':'},
-});
 
-const handelClick = async () => {
-  try {
-    await validate();
-    console.log("formData", formData.value);
-  } catch (err) {
-    console.warn("error rules!");
-  }
-};
+// const handelClick = async () => {
+//   try {
+//     await validate();
+//     console.log("formData", formData.value);
+//   } catch (err) {
+//     console.warn("error rules!");
+//   }
+// };
 </script>
 
 <style scoped lang="scss">
