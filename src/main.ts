@@ -9,7 +9,7 @@ import 'element-plus/dist/index.css'
 import * as AIcons from '@element-plus/icons-vue'
 
 // import aUI from './components/index.ts'
-import aUI from '../lib/aura-ui'
+import aUI from '../lib'
 import '../lib/aura-ui.css'
 
 // 单独引入组件
