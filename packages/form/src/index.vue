@@ -1,7 +1,6 @@
 component
 <script setup lang="ts">
 import {
-  ElForm,
   ElCascader,
   ElCheckbox,
   ElCheckboxGroup,
@@ -610,7 +609,6 @@ function getFormItemProps(item: Record<string, any>) {
 
         <template v-else>
           <el-form-item :label="item.label" :prop="item.key" v-bind="getFormItemProps(item)">
-            <!-- 打包影响  formConfig-->
             <!-- <template #label>
               <span style="display: inline-flex; align-items: center; gap: 4px">
                 <span
