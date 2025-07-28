@@ -13,9 +13,9 @@ export const useAForm = (initialProps: Record<string, any>) => {
       aForm,
       {
         ...restProps,
-        ...formConfig,
+        formConfig,
         ref: formRef,
-      },
+      } as any,
       slots,
     );
   };
