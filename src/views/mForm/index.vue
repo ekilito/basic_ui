@@ -2,6 +2,7 @@
   <m-form
     :options="options"
     label-width="120px"
+    label-suffix=":"
     @on-success="onSuccess"
   >
     <template #uploadArea>
