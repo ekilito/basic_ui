@@ -1,10 +1,13 @@
 <template>
   <div class="app-page">
-    <a-form :rules="rules" :formItems="formItems" :modelValue="formData" :formConfig="{ labelWidth: '120px', size: 'small'}" >
+    <a-form :rules="rules" :formItems="formItems" :modelValue="formData" :formConfig="{ labelWidth: '120px', size: 'small', labelSuffix: ':'}" >
       <template #appendSlots>input append slot</template>
       <template #footerSlots>select footer slot</template>
       <template #suffixSlots> RMB </template>
       <template #keySlot>keySlot</template>
+      <template #xxxxx>
+         xxx
+      </template>
       <template #action>
         <el-button  type="primary">提交</el-button>
       </template>
@@ -67,13 +70,15 @@ const formItems = computed(() => [
   {
     label: "AForm",
     type: "title",
+  
   },
+
   // 同步测试
   {
     label: "同步()=>{[]}",
     key: "sync_test1",
     type: "select",
-   
+    span: 12,
     options: () => {
       console.log("同步()=>{[]}");
       return [
@@ -87,6 +92,7 @@ const formItems = computed(() => [
     label: "api异步",
     key: "async_test2",
     type: "select",
+    span: 12,
    
     options: async () => {
       console.log("api异步async");
@@ -328,6 +334,7 @@ const formItems = computed(() => [
 
       console.log("选择的文件:", e);
       ElMessage({ message: "上传成功", type: "success" });
+
     },
     rules: [{ required: true, message: "upload", trigger: "change" }],
   },
@@ -337,6 +344,14 @@ const formItems = computed(() => [
     type: "ATimerPicker",
    
     rules: [{ required: true, message: "ATimerPicker", trigger: "blur" }],
+  },
+  {
+     label: '位置:',
+     key: 'lineList',
+     type: 'ADrawPath',
+     onChange: (e) => {
+      console.log("formData.value.lineList =>", formData.value.lineList)
+     }
   },
   {
     label: "经纬度坐标",
@@ -518,7 +533,7 @@ const formItems = computed(() => [
   },
   {
     label: "keySlot",
-    key: "keySlot",
+    key: "xxxxx",
   },
 ]);
 
